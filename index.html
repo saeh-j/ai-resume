@@ -555,32 +555,15 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
 <body>
 <div id="root"><div class="boot"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" class="spin"><path d="M12 3v4M12 17v4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M3 12h4M17 12h4M5.6 18.4l2.8-2.8M15.6 8.4l2.8-2.8"/></svg><div>Preparing Tally…</div></div></div>
 
-<script src="config.js" onerror="window.TALLY_CONFIG={}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.24.7/babel.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
-  (function(){
-    var cfg = window.TALLY_CONFIG || {};
-    try {
-      if(!cfg.supabaseUrl || !cfg.supabaseKey) throw new Error('missing config');
-      window._sb = supabase.createClient(cfg.supabaseUrl, cfg.supabaseKey);
-    } catch(e) {
-      // Config not available — stub with a visible error on sign-in attempts
-      var configErr = async function(){ return {data:null, error:{message:'Supabase not configured. Check Vercel environment variables (SUPABASE_URL, SUPABASE_ANON_KEY).'}}; };
-      window._sb = {
-        auth:{
-          getSession: async function(){ return {data:{session:null}}; },
-          onAuthStateChange: function(){ return {data:{subscription:{unsubscribe:function(){}}}}; },
-          signInWithPassword: configErr, signUp: configErr,
-          signOut: async function(){}, getUser: async function(){ return {data:{user:null}}; },
-          resetPasswordForEmail: configErr,
-        },
-        from: function(){ return { select:function(){ return {eq:function(){ return {maybeSingle: async function(){ return {data:null}; }}; }}; }, upsert: async function(){}, insert: async function(){} }; },
-      };
-    }
-  })();
+  window._sb = supabase.createClient(
+    'https://wdkcapbppjqglhreoagn.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indka2NhcGJwcGpxZ2xocmVvYWduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI1ODQ4MzQsImV4cCI6MjA5ODE2MDgzNH0.YQR1pZUsmYI5mL0oLSJ-sak5ZoQ6Azvr0g-5GNmM-ag'
+  );
 </script>
 
 <script type="text/babel" data-presets="react">
@@ -690,7 +673,7 @@ function recDate(d){
   return `${dt.getFullYear()} · ${String(dt.getMonth()+1).padStart(2,'0')}`;
 }
 const STORAGE_OK = typeof window!=='undefined' && !!window.storage;
-const CLAUDE_KEY = (window.TALLY_CONFIG||{}).claudeKey||'';
+const CLAUDE_KEY = ()=> localStorage.getItem('tally_claude_key')||'';
 const store = {
   get: async (k, fb) => {
     if(STORAGE_OK){ try{ const r = await window.storage.get(k); return r ? JSON.parse(r.value) : fb; }catch(e){} }
@@ -727,7 +710,7 @@ async function callAI({ system, user, messages, attachments }){
     method:'POST',
     headers:{
       'Content-Type':'application/json',
-      'x-api-key': CLAUDE_KEY,
+      'x-api-key': CLAUDE_KEY(),
       'anthropic-version': '2023-06-01',
       'anthropic-dangerous-direct-browser-access': 'true',
     },
@@ -2172,7 +2155,9 @@ function Toggle({ checked, onChange }){
 function SettingsModal({ onClose }){
   const { profile, setProfile, entries, setEntries, setResumes, setCommunity, settings, setSettings, notify } = useApp();
   const [armed,setArmed]=useState(false);
+  const [claudeKey,setClaudeKey]=useState(()=>localStorage.getItem('tally_claude_key')||'');
   const set=(k,v)=>setSettings(s=>({...s,[k]:v}));
+  const saveClaudeKey=()=>{ localStorage.setItem('tally_claude_key',claudeKey.trim()); notify('Claude key saved'); };
 
   const exportData = () => {
     const payload = { profile, entries, settings, exportedAt: new Date().toISOString() };
@@ -2242,6 +2227,13 @@ function SettingsModal({ onClose }){
           <select className="field" style={{width:'auto',padding:'.32rem .65rem',fontSize:'.82rem'}} value={settings.aiTone||'Professional'} onChange={e=>set('aiTone',e.target.value)}>
             {['Professional','Impactful','Concise','Friendly'].map(t=><option key={t}>{t}</option>)}
           </select>
+        </div>
+        <div className="setting-row" style={{flexDirection:'column',alignItems:'stretch',gap:'.5rem'}}>
+          <div><div className="setting-label">Claude API key</div><div className="setting-desc">Stored only in this browser. Get yours at console.anthropic.com</div></div>
+          <div style={{display:'flex',gap:'.5rem'}}>
+            <input className="field" type="password" placeholder="sk-ant-api03-…" value={claudeKey} onChange={e=>setClaudeKey(e.target.value)} style={{flex:1,padding:'.4rem .7rem',fontSize:'.82rem'}}/>
+            <Btn variant="ghost" size="sm" onClick={saveClaudeKey}>Save</Btn>
+          </div>
         </div>
       </div>
 
