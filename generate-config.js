@@ -1,9 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 
-// Accept several common naming conventions
-const supabaseKey = process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.ANONAPI || '';
-const claudeKey   = process.env.CLAUDE_API_KEY    || process.env.CLAUDEAPI || '';
+// Accept several common naming conventions (upper and lower case)
+const supabaseKey = process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.ANONAPI || process.env.anonapi || '';
+const claudeKey   = process.env.CLAUDE_API_KEY    || process.env.CLAUDEAPI || process.env.claudeapi || '';
 
 // Derive the Supabase URL from the JWT ref claim — no extra env var needed
 function urlFromKey(key) {
