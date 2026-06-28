@@ -531,14 +531,31 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
 <body>
 <div id="root"><div class="boot"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" class="spin"><path d="M12 3v4M12 17v4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M3 12h4M17 12h4M5.6 18.4l2.8-2.8M15.6 8.4l2.8-2.8"/></svg><div>Preparing Tally…</div></div></div>
 
-<script src="config.js"></script>
+<script src="config.js" onerror="window.TALLY_CONFIG={}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.24.7/babel.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
-  const _cfg = window.TALLY_CONFIG || {};
-  window._sb = supabase.createClient(_cfg.supabaseUrl, _cfg.supabaseKey);
+  (function(){
+    var cfg = window.TALLY_CONFIG || {};
+    try {
+      window._sb = supabase.createClient(cfg.supabaseUrl, cfg.supabaseKey);
+    } catch(e) {
+      // Supabase not yet configured — stub so app renders without crashing
+      var noop = async function(){ return {data:{},error:null}; };
+      window._sb = {
+        auth:{
+          getSession: async function(){ return {data:{session:null}}; },
+          onAuthStateChange: function(){ return {data:{subscription:{unsubscribe:function(){}}}}; },
+          signInWithPassword: noop, signUp: noop,
+          signOut: noop, getUser: async function(){ return {data:{user:null}}; },
+          resetPasswordForEmail: noop,
+        },
+        from: function(){ return { select:function(){ return {eq:function(){ return {maybeSingle:noop}; }}; }, upsert:noop, insert:noop }; },
+      };
+    }
+  })();
 </script>
 
 <script type="text/babel" data-presets="react">
@@ -2284,6 +2301,19 @@ function AuthScreen(){
   );
 }
 
+class ErrorBoundary extends React.Component {
+  constructor(p){ super(p); this.state={err:null}; }
+  static getDerivedStateFromError(err){ return {err}; }
+  render(){
+    if(this.state.err) return (
+      <div style={{padding:'2rem',fontFamily:'monospace',fontSize:'.85rem',color:'#b91c1c',background:'#fef2f2',border:'1px solid #fecaca',borderRadius:'12px',margin:'2rem',lineHeight:1.6}}>
+        <strong>Something went wrong.</strong><br/>{String(this.state.err)}
+      </div>
+    );
+    return this.props.children;
+  }
+}
+
 function Root(){
   const [session,setSession] = useState(undefined);
   useEffect(()=>{
@@ -2376,7 +2406,9 @@ function App({ session }){
   );
 }
 
-ReactDOM.createRoot(document.getElementById('root')).render(<Root/>);
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <ErrorBoundary><Root/></ErrorBoundary>
+);
 </script>
 </body>
 </html>
