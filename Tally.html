@@ -1,0 +1,2382 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Tally — your career, on the record</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235538EE' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M5 5v14M9.5 5v14M14 5v14M18.5 5v14M3.5 16.5 20 9'/%3E%3C/svg%3E" />
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Space+Mono:wght@400;700&display=swap');
+
+:root{
+  --paper:#F3F4F7; --paper-2:#ECEEF3; --surface:#FFFFFF;
+  --ink:#16171D; --ink-soft:#4C4E59; --ink-faint:#8B8D9A;
+  --line:#E5E6EC; --line-2:#EFF0F4;
+  --accent:#5538EE; --accent-2:#3F27C9; --accent-soft:#ECE9FE;
+  --jade:#0E8C6A; --jade-soft:#DEF1EA;
+  --warn:#9A6B12; --warn-soft:#F6ECD7;
+  --shadow:0 1px 2px rgba(22,23,29,.04),0 10px 30px rgba(22,23,29,.05);
+  --shadow-lg:0 24px 70px rgba(22,23,29,.18);
+  --radius:16px;
+}
+body.dark{
+  --paper:#0F1117; --paper-2:#181B23; --surface:#1C1F2E;
+  --ink:#E4E6F0; --ink-soft:#9096B0; --ink-faint:#555A72;
+  --line:#282C3E; --line-2:#1E2132;
+  --accent:#7B63F5; --accent-2:#9176FF; --accent-soft:#241D4A;
+  --jade:#12B07C; --jade-soft:#0C2B1E;
+  --warn:#C98D2A; --warn-soft:#2A1D07;
+  --shadow:0 1px 3px rgba(0,0,0,.35),0 10px 30px rgba(0,0,0,.4);
+  --shadow-lg:0 24px 70px rgba(0,0,0,.6);
+  color-scheme:dark;
+}
+body.dark .rs-page{background:#1a1d2e;color:#dde0f0}
+body.dark .cover-paper{background:#1a1d2e}
+body.dark .cover-text{color:#dde0f0}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:'Inter',system-ui,-apple-system,sans-serif;
+  background:var(--paper); color:var(--ink);
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  font-size:15px; line-height:1.55;
+}
+button{font-family:inherit}
+::selection{background:var(--accent-soft)}
+.font-display{font-family:'Bricolage Grotesque',system-ui,sans-serif; letter-spacing:-0.02em; line-height:1.06; font-weight:700}
+.mono{font-family:'Space Mono',ui-monospace,monospace}
+.dim{color:var(--ink-faint)}
+.sm{font-size:.78rem}
+.eyebrow{font-family:'Space Mono',monospace; font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); display:inline-flex; align-items:center; gap:.45rem; font-weight:700}
+.eyebrow svg{stroke:var(--accent)}
+.spin{animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;font-weight:600;font-size:.86rem;border-radius:11px;padding:.62rem 1.02rem;cursor:pointer;border:1px solid transparent;transition:transform .12s ease, background .15s, border .15s, box-shadow .15s;line-height:1;white-space:nowrap}
+.btn:active{transform:translateY(1px)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.btn-primary{background:var(--accent);color:#fff;box-shadow:0 1px 0 rgba(255,255,255,.2) inset, 0 6px 16px rgba(85,56,238,.25)}
+.btn-primary:hover:not(:disabled){background:var(--accent-2)}
+.btn-ghost{background:var(--surface);color:var(--ink);border-color:var(--line)}
+.btn-ghost:hover:not(:disabled){background:var(--paper-2);border-color:#d9dbe4}
+.btn-quiet{background:var(--paper-2);color:var(--ink)}
+.btn-quiet:hover:not(:disabled){background:#e3e6ee}
+.btn-sm{padding:.42rem .72rem;font-size:.78rem;border-radius:9px}
+.link-btn{background:none;border:none;color:var(--accent);font-weight:600;font-size:.82rem;cursor:pointer;display:inline-flex;align-items:center;gap:.25rem;padding:0}
+.link-btn:hover{text-decoration:underline}
+.ic-btn{background:none;border:none;cursor:pointer;color:var(--ink-faint);padding:.28rem;border-radius:8px;display:inline-flex;transition:.15s}
+.ic-btn:hover{background:var(--paper-2);color:var(--ink)}
+
+/* ---------- fields ---------- */
+.field{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:.66rem .8rem;font-size:.9rem;color:var(--ink);font-family:inherit;outline:none;transition:border .15s, box-shadow .15s}
+.field::placeholder{color:#aaadb8}
+.field:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+textarea.field{resize:vertical;line-height:1.55}
+select.field{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238B8D9A' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .7rem center;padding-right:2rem}
+.lbl{display:block;font-size:.78rem;font-weight:600;color:var(--ink-soft);margin:.85rem 0 .35rem}
+.lbl .field,.lbl select,.lbl textarea{margin-top:.32rem;font-weight:400}
+.h1-field{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.25rem;margin-top:.6rem}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:.4rem .9rem}
+.switch{display:flex;align-items:center;gap:.55rem;font-size:.85rem;color:var(--ink-soft);cursor:pointer}
+.switch input{width:18px;height:18px;accent-color:var(--accent);cursor:pointer}
+.big-switch{font-size:.9rem;color:var(--ink)}
+.toggle-row{display:flex;flex-wrap:wrap;gap:1.2rem;margin:1rem 0 .2rem}
+
+/* ---------- cards ---------- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.pad{padding:1.2rem 1.3rem}
+.sec-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;gap:1rem}
+
+/* ---------- badges / chips ---------- */
+.badge{display:inline-flex;align-items:center;gap:.35rem;font-size:.7rem;font-weight:700;padding:.24rem .55rem;border-radius:7px;letter-spacing:.01em;white-space:nowrap}
+.chip{display:inline-flex;align-items:center;gap:.3rem;font-size:.76rem;font-weight:500;padding:.26rem .62rem;border-radius:999px;background:var(--paper-2);color:var(--ink-soft);border:1px solid var(--line)}
+.chip-accent{background:var(--accent-soft);color:var(--accent-2);border-color:transparent}
+.chip-x{background:none;border:none;cursor:pointer;color:inherit;opacity:.6;display:inline-flex;padding:0}
+.chip-x:hover{opacity:1}
+.chip-row{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.6rem}
+.chip-mini{font-family:'Space Mono',monospace;font-size:.68rem;padding:.18rem .5rem;border-radius:6px;background:var(--paper-2);color:var(--ink-soft);font-weight:400}
+.chip-warn{background:var(--warn-soft);color:var(--warn)}
+.cat-Work{background:#ECEFF4;color:#54627B} .cat-Project{background:#ECE9FB;color:#5538EE}
+.cat-Award{background:#F5EEDC;color:#937420} .cat-Learning{background:#E7F0F2;color:#3C6C7A}
+.cat-Volunteer{background:#F4E9F0;color:#8A4A77} .cat-Leadership{background:#E8EFEA;color:#3D7A56}
+.cat-Milestone{background:#F2EBE8;color:#995A3E} .cat-Other{background:#EDEDF1;color:#6A6C78}
+
+/* ---------- app shell ---------- */
+.app-shell{display:flex;min-height:100vh}
+.sidebar{width:248px;flex-shrink:0;position:sticky;top:0;height:100vh;border-right:1px solid var(--line);background:var(--surface);display:flex;flex-direction:column;padding:1.1rem .9rem}
+.brand{display:flex;align-items:center;gap:.6rem;padding:.4rem .5rem 1.1rem}
+.brand-mark{width:30px;height:30px;border-radius:9px;background:var(--ink);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.brand-mark svg{stroke:#fff;width:18px;height:18px}
+.brand-name{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.32rem;letter-spacing:-0.03em}
+.nav{display:flex;flex-direction:column;gap:.18rem;margin-top:.3rem}
+.nav-item{display:flex;align-items:center;gap:.7rem;padding:.6rem .72rem;border-radius:10px;font-weight:500;color:var(--ink-soft);cursor:pointer;border:none;background:none;font-size:.92rem;text-align:left;transition:.15s;width:100%}
+.nav-item svg{stroke:var(--ink-faint);flex-shrink:0}
+.nav-item:hover{background:var(--paper-2);color:var(--ink)}
+.nav-item:hover svg{stroke:var(--ink)}
+.nav-item.on{background:var(--accent-soft);color:var(--accent-2);font-weight:600}
+.nav-item.on svg{stroke:var(--accent)}
+.side-bottom{margin-top:auto;display:flex;flex-direction:column;gap:.5rem}
+.ai-pill{display:inline-flex;align-items:center;gap:.4rem;font-family:'Space Mono',monospace;font-size:.66rem;letter-spacing:.06em;color:var(--ink-faint);padding:.3rem .55rem;border-radius:7px;background:var(--paper-2);text-transform:uppercase}
+.ai-on{color:var(--jade)} .ai-on .dotled{background:var(--jade)}
+.ai-off{color:var(--warn)} .ai-off .dotled{background:var(--warn)}
+.dotled{width:7px;height:7px;border-radius:50%;background:var(--ink-faint);display:inline-block}
+.side-sub-btn{display:flex;align-items:center;gap:.5rem;background:none;border:none;color:var(--ink-faint);font-size:.8rem;cursor:pointer;padding:.4rem .55rem;border-radius:8px;font-weight:500}
+.side-sub-btn:hover{background:var(--paper-2);color:var(--ink)}
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.page-body{max-width:980px;width:100%;margin:0 auto;padding:2.2rem 2rem 6rem}
+
+/* mobile top + bottom nav */
+.mtop{display:none}
+.bottomnav{display:none}
+
+/* ---------- headers ---------- */
+.dash-hd{margin-bottom:1.4rem}
+.h-xl{font-size:2.3rem;margin:.5rem 0 .55rem}
+.lede{color:var(--ink-soft);font-size:1.02rem;max-width:60ch;margin:0}
+
+/* ---------- composer ---------- */
+.composer{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:1rem 1.1rem;box-shadow:var(--shadow);margin-bottom:1.5rem;transition:border .15s}
+.composer:focus-within{border-color:#cfd2dd;box-shadow:0 0 0 4px rgba(85,56,238,.07),var(--shadow)}
+.composer-big{padding:1.25rem 1.3rem}
+.composer-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:.55rem}
+.composer-head .mono{font-size:.7rem}
+.composer-input{width:100%;border:none;outline:none;resize:none;font-family:'Bricolage Grotesque',sans-serif;font-size:1.18rem;font-weight:500;color:var(--ink);line-height:1.35;background:transparent;letter-spacing:-0.01em}
+.composer-big .composer-input{font-size:1.32rem}
+.composer-input::placeholder{color:#b3b6c1;font-weight:500}
+.composer-foot{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-top:.7rem;flex-wrap:wrap}
+.hint-row{display:flex;flex-wrap:wrap;gap:.3rem}
+.hint{font-family:'Space Mono',monospace;font-size:.7rem;padding:.26rem .55rem;border-radius:7px;border:1px solid var(--line);background:var(--surface);color:var(--ink-faint);cursor:pointer;transition:.15s;letter-spacing:.02em}
+.hint:hover{border-color:#cfd2dd;color:var(--ink-soft)}
+.hint-on{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+/* ---------- stat strip ---------- */
+.stat-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:.9rem;margin-bottom:1.5rem}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:.95rem 1.05rem}
+.stat-v{font-size:1.85rem;line-height:1;color:var(--ink)}
+.stat-l{font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);margin-top:.5rem}
+
+/* ---------- dashboard grid ---------- */
+.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem}
+.mini-stack{display:flex;flex-direction:column;gap:.7rem}
+.mini-rec{display:flex;align-items:center;gap:.7rem}
+.mini-no{font-size:.66rem;color:var(--ink-faint);width:38px;flex-shrink:0}
+.mini-ic{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mini-text{min-width:0}
+.mini-title{font-weight:600;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mini-sub{font-size:.66rem;color:var(--ink-faint)}
+.bars{display:flex;flex-direction:column;gap:.6rem}
+.bar-row{display:flex;align-items:center;gap:.7rem}
+.bar-label{font-size:.82rem;width:120px;flex-shrink:0;color:var(--ink-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-track{flex:1;height:7px;background:var(--paper-2);border-radius:99px;overflow:hidden}
+.bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),#7b63f5);border-radius:99px}
+.bar-n{font-size:.7rem;color:var(--ink-faint);width:18px;text-align:right}
+.cat-mini{margin-top:1rem;padding-top:1rem;border-top:1px solid var(--line-2);display:flex;flex-direction:column;gap:.5rem}
+.catbar{display:flex;align-items:center;gap:.55rem}
+.catbar-ic{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.catbar-name{font-size:.76rem;width:78px;color:var(--ink-soft)}
+.catbar-track{flex:1;height:5px;background:var(--paper-2);border-radius:99px;overflow:hidden}
+.catbar-fill{height:100%;background:var(--ink-faint);border-radius:99px;opacity:.5}
+.nudge{display:flex;flex-direction:column;align-items:flex-start;gap:.8rem;background:linear-gradient(160deg,#fbfaff,#fff)}
+.nudge-text{font-size:1.18rem;line-height:1.25;color:var(--ink);font-weight:600}
+.cta-card{background:linear-gradient(155deg,var(--ink),#26283A);border-color:transparent;color:#fff}
+.cta-card .eyebrow{color:#a8abc4} .cta-card .eyebrow svg{stroke:#9b8bff}
+.cta-h{font-size:1.4rem;margin:.6rem 0 .5rem;color:#fff}
+.cta-p{color:#c7c9d8;font-size:.9rem;margin:0 0 1rem}
+.cta-card .btn-primary{background:#fff;color:var(--ink);box-shadow:none}
+.cta-card .btn-primary:hover{background:#eceef3}
+
+/* ---------- record cards ---------- */
+.rec-list{display:flex;flex-direction:column;gap:.9rem}
+.rec{display:flex;padding:1.05rem 1.2rem;gap:1rem;transition:border .15s, box-shadow .15s}
+.rec:hover{border-color:#d7dae3;box-shadow:0 4px 18px rgba(22,23,29,.06)}
+.rec-rail{display:flex;flex-direction:column;align-items:center;gap:.5rem;width:46px;flex-shrink:0}
+.rec-no{font-size:.62rem;color:var(--ink-faint);letter-spacing:.02em}
+.rec-dot{width:32px;height:32px;border-radius:9px;background:var(--paper-2);color:var(--ink-soft);display:flex;align-items:center;justify-content:center}
+.rec-body{flex:1;min-width:0}
+.rec-top{display:flex;align-items:flex-start;justify-content:space-between;gap:.8rem}
+.rec-title{font-size:1.12rem;font-weight:700;margin:0;color:var(--ink)}
+.rec-actions{display:flex;gap:.1rem;opacity:0;transition:.15s}
+.rec:hover .rec-actions{opacity:1}
+.rec-meta{display:flex;align-items:center;flex-wrap:wrap;gap:.45rem;font-size:.68rem;color:var(--ink-faint);margin:.4rem 0 .6rem}
+.rec-meta .sep{opacity:.5}
+.rec-meta .vis{display:inline-flex;align-items:center;gap:.25rem}
+.rec-meta .vis svg{width:11px;height:11px}
+.now-tag{background:var(--jade-soft);color:var(--jade);padding:.05rem .35rem;border-radius:5px;font-size:.6rem;letter-spacing:.08em;font-weight:700}
+.rec-summary{margin:0;font-size:.92rem;color:var(--ink-soft);line-height:1.5}
+.metrics{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.7rem}
+.metric{display:inline-flex;align-items:center;gap:.32rem;font-size:.76rem;font-weight:600;color:var(--jade);background:var(--jade-soft);padding:.22rem .55rem;border-radius:7px}
+.metric svg{width:12px;height:12px;stroke:var(--jade)}
+
+/* ---------- journal filter ---------- */
+.filter-bar{display:flex;flex-direction:column;gap:.8rem;margin-bottom:1.3rem}
+.search{display:flex;align-items:center;gap:.55rem;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:.5rem .8rem}
+.search svg{stroke:var(--ink-faint);flex-shrink:0}
+.search input{flex:1;border:none;outline:none;background:transparent;font-size:.92rem;font-family:inherit;color:var(--ink)}
+.cat-tabs{display:flex;flex-wrap:wrap;gap:.4rem}
+.cat-tab{display:inline-flex;align-items:center;gap:.4rem;font-size:.8rem;font-weight:500;padding:.4rem .7rem;border-radius:9px;border:1px solid var(--line);background:var(--surface);color:var(--ink-soft);cursor:pointer;transition:.15s}
+.cat-tab:hover{border-color:#cfd2dd}
+.cat-tab-on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.cat-tab-n{font-family:'Space Mono',monospace;font-size:.66rem;opacity:.6}
+.cat-tab-on .cat-tab-n{opacity:.8}
+
+/* ---------- empty ---------- */
+.empty{display:flex;flex-direction:column;align-items:center;gap:.7rem;padding:2.2rem 1rem;text-align:center;color:var(--ink-faint)}
+.empty-mark{width:42px;height:42px;border-radius:12px;background:var(--paper-2);display:flex;align-items:center;justify-content:center}
+.empty-mark svg{stroke:var(--ink-faint)}
+.empty p{margin:0;font-size:.9rem;max-width:36ch}
+
+/* ---------- profile ---------- */
+.profile-hero{overflow:hidden;margin-bottom:1.1rem}
+.ph-cover{height:96px;background:linear-gradient(115deg,var(--accent),#8f3ff0 60%,#c14fb0)}
+.ph-main{display:flex;align-items:flex-end;gap:1.1rem;padding:0 1.5rem 1.3rem;margin-top:-42px}
+.avatar{border-radius:16px;display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;flex-shrink:0;border:3px solid var(--surface);box-shadow:var(--shadow)}
+.ph-info{flex:1;min-width:0;padding-bottom:.2rem}
+.ph-info .h-xl{font-size:1.7rem;margin:0}
+.ph-head{color:var(--ink-soft);font-size:1rem;margin:.2rem 0 .5rem;font-weight:500}
+.ph-meta{display:flex;flex-wrap:wrap;gap:.9rem;font-size:.72rem;color:var(--ink-faint)}
+.ph-meta span,.ph-meta a{display:inline-flex;align-items:center;gap:.32rem}
+.ph-meta svg{width:12px;height:12px;stroke:var(--ink-faint)}
+.li-link{background:none;border:none;cursor:pointer;color:var(--accent);font-family:'Space Mono',monospace;font-size:.72rem;display:inline-flex;align-items:center;gap:.32rem;padding:0;font-weight:700;text-decoration:none}
+.li-link svg{stroke:var(--accent)}
+.li-link:hover{text-decoration:underline}
+.ph-actions{padding-bottom:.3rem}
+.profile-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:1.1rem;align-items:start}
+.profile-col{display:flex;flex-direction:column;gap:1.1rem;min-width:0}
+.prof-summary{margin:0;font-size:.96rem;line-height:1.6;color:var(--ink-soft)}
+.role-list{display:flex;flex-direction:column;gap:.8rem}
+.role{display:flex;align-items:flex-start;gap:.6rem}
+.role-dot{width:9px;height:9px;border-radius:50%;background:var(--jade);margin-top:.4rem;flex-shrink:0;box-shadow:0 0 0 3px var(--jade-soft)}
+.role-title{font-weight:600;font-size:.92rem}
+.role-org{font-size:.7rem;color:var(--ink-faint);margin-top:.1rem}
+.pub-feed,.role-list{min-width:0}
+.pub-item{display:flex;align-items:center;gap:.6rem;padding:.5rem 0;border-bottom:1px solid var(--line-2)}
+.pub-item:last-child{border-bottom:none}
+.pub-ic{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pub-title{font-size:.86rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pub-sub{font-size:.66rem;color:var(--ink-faint)}
+.skill-cloud{display:flex;flex-wrap:wrap;gap:.45rem;align-items:center}
+.skill-tag{display:inline-flex;align-items:baseline;gap:.3rem;background:var(--paper-2);color:var(--ink);padding:.3rem .6rem;border-radius:9px;font-weight:600;line-height:1.1}
+.skill-ct{font-family:'Space Mono',monospace;font-size:.62rem;color:var(--ink-faint);font-weight:400}
+.linkedin-card .li-blurb{font-size:.86rem;color:var(--ink-soft);margin:.7rem 0 1rem;line-height:1.5}
+.sm-note{font-size:.74rem;margin:.7rem 0 0;line-height:1.4}
+
+/* ---------- community ---------- */
+.community-layout{display:grid;grid-template-columns:1fr 300px;gap:1.3rem;align-items:start;max-width:1020px}
+.feed{display:flex;flex-direction:column;gap:1.1rem}
+.post{padding:1.2rem 1.3rem}
+.post-hd{display:flex;align-items:center;gap:.7rem;margin-bottom:.85rem}
+.post-who{flex:1;min-width:0}
+.post-name{font-weight:700;font-size:.95rem;display:flex;align-items:center;gap:.5rem}
+.you-tag{background:var(--accent-soft);color:var(--accent-2);font-family:'Space Mono',monospace;font-size:.58rem;text-transform:uppercase;letter-spacing:.06em;padding:.1rem .35rem;border-radius:5px;font-weight:700}
+.post-sub{font-size:.68rem;color:var(--ink-faint)}
+.post-text{margin:0;color:var(--ink-soft);font-size:.92rem;line-height:1.55;white-space:pre-wrap}
+.post-media{margin:.8rem 0 0;border-radius:10px;overflow:hidden;max-height:420px;background:#000;display:flex;align-items:center;justify-content:center}
+.post-media img{width:100%;max-height:420px;object-fit:contain;display:block}
+.post-media video{width:100%;max-height:420px;display:block}
+.post-vis{font-family:'Space Mono',monospace;font-size:.62rem;color:var(--ink-faint);display:inline-flex;align-items:center;gap:.25rem;margin-left:auto}
+.post-foot{display:flex;align-items:center;gap:.4rem;margin-top:.9rem;padding-top:.85rem;border-top:1px solid var(--line-2)}
+.react{display:inline-flex;align-items:center;gap:.4rem;background:none;border:1px solid var(--line);border-radius:9px;padding:.36rem .7rem;font-size:.8rem;font-weight:600;color:var(--ink-soft);cursor:pointer;transition:.15s}
+.react:hover{border-color:#cfd2dd;background:var(--paper-2)}
+.react svg{stroke:currentColor}
+.react-on{color:#d6336c;border-color:#f3c7d6;background:#fdeef3}
+.comments{margin-top:.85rem;border-top:1px solid var(--line-2);padding-top:.85rem;display:flex;flex-direction:column;gap:.55rem}
+.cmt{font-size:.85rem;color:var(--ink-soft)}
+.cmt b{color:var(--ink);font-weight:600}
+.cmt-add{display:flex;gap:.5rem;margin-top:.2rem}
+.cmt-add .field{padding:.5rem .7rem}
+/* post composer */
+.pcomposer{margin-bottom:1.3rem}
+.pcomposer textarea{width:100%;border:none;outline:none;resize:none;font-family:'Inter',sans-serif;font-size:.95rem;line-height:1.55;background:transparent;color:var(--ink);min-height:72px}
+.pcomposer textarea::placeholder{color:#b3b6c1}
+.pcomposer-tools{display:flex;align-items:center;gap:.5rem;margin-top:.7rem;padding-top:.7rem;border-top:1px solid var(--line-2);flex-wrap:wrap}
+.vis-toggle{display:flex;align-items:center;gap:.3rem;font-size:.78rem;font-weight:600;color:var(--ink-soft);background:var(--paper-2);border:1px solid var(--line);border-radius:8px;padding:.32rem .65rem;cursor:pointer;transition:.15s}
+.vis-toggle:hover{background:#e3e6ee}
+.vis-toggle.pub{color:var(--jade);border-color:var(--jade-soft);background:var(--jade-soft)}
+.media-preview{position:relative;margin:.6rem 0 0;border-radius:10px;overflow:hidden;max-height:280px;background:#000}
+.media-preview img,.media-preview video{width:100%;max-height:280px;object-fit:contain;display:block}
+.media-preview-x{position:absolute;top:.5rem;right:.5rem;background:rgba(0,0,0,.5);border:none;border-radius:7px;color:#fff;cursor:pointer;padding:.3rem;display:flex;line-height:1}
+/* connections panel */
+.conn-list{display:flex;flex-direction:column;gap:.55rem;margin-top:.7rem}
+.conn-item{display:flex;align-items:center;gap:.65rem;padding:.5rem .3rem;border-bottom:1px solid var(--line-2)}
+.conn-item:last-child{border-bottom:none}
+.conn-info{flex:1;min-width:0}
+.conn-name{font-weight:600;font-size:.88rem}
+.conn-sub{font-size:.68rem;color:var(--ink-faint)}
+@media(max-width:900px){.community-layout{grid-template-columns:1fr}}
+
+/* ---------- résumé studio ---------- */
+.studio{max-width:1180px}
+.studio-tabs{display:flex;gap:.4rem;margin-bottom:1.3rem;flex-wrap:wrap}
+.stab{display:inline-flex;align-items:center;gap:.45rem;font-size:.83rem;font-weight:600;padding:.55rem .9rem;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink-soft);cursor:pointer;transition:.15s}
+.stab svg{stroke:currentColor}
+.stab:hover:not(:disabled){border-color:#cfd2dd}
+.stab-on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.stab-on svg{stroke:#fff}
+.stab-lock{opacity:.45;cursor:not-allowed}
+.setup{max-width:760px}
+.setup-foot,.tpl-foot{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-top:1.3rem;flex-wrap:wrap}
+.tone-row{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.4rem}
+.saved-card{margin-top:1.2rem;max-width:760px}
+.saved-list{display:flex;flex-direction:column;gap:.4rem;margin-top:.3rem}
+.saved-item{display:flex;align-items:center;gap:.8rem;padding:.6rem .7rem;border:1px solid var(--line);border-radius:10px;background:var(--surface);cursor:pointer;transition:.15s;text-align:left}
+.saved-item:hover{border-color:#cfd2dd;background:var(--paper-2)}
+.saved-name{flex:1;font-weight:600;font-size:.88rem}
+.saved-item svg{stroke:var(--ink-faint)}
+
+.tpl-gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:.9rem;margin-bottom:1.2rem}
+.tpl-card{display:flex;flex-direction:column;gap:.5rem;padding:.7rem;border:1.5px solid var(--line);border-radius:14px;background:var(--surface);cursor:pointer;transition:.15s;text-align:left}
+.tpl-card:hover{border-color:#bcbfd0}
+.tpl-on{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.tpl-preview{aspect-ratio:1/1.3;background:#fff;border:1px solid var(--line-2);border-radius:9px;overflow:hidden;display:flex}
+.tpl-drop{align-items:center;justify-content:center;flex-direction:column;gap:.5rem;color:var(--ink-faint);font-size:.74rem;font-weight:600;border-style:dashed;text-align:center;padding:.8rem}
+.tpl-drop svg{stroke:var(--ink-faint)}
+.tpl-thumb-img{width:100%;height:100%;object-fit:cover}
+.tpl-meta{display:flex;align-items:center;justify-content:space-between}
+.tpl-name{font-weight:700;font-size:.9rem}
+.tpl-check{stroke:var(--accent)}
+.tpl-blurb{font-size:.72rem;color:var(--ink-faint);line-height:1.35}
+.tpl-foot-label{font-size:.6rem;letter-spacing:.12em;color:var(--ink-faint)}
+.tpl-foot-name{font-size:1.1rem;margin-top:.15rem}
+
+/* template thumbnail mini */
+.thumb{width:100%;padding:10% 12%;display:flex;flex-direction:column;gap:5%}
+.thumb-name{font-weight:800;font-size:1.5rem;line-height:1}
+.thumb-line{height:4px;border-radius:2px;background:var(--ink)}
+.thumb-cols{display:flex;gap:8%;flex:1;margin-top:4%}
+.thumb-side{width:34%;display:flex;flex-direction:column;gap:7px}
+.thumb-main{flex:1;display:flex;flex-direction:column;gap:6px}
+.thumb-rows{display:flex;flex-direction:column;gap:6px;margin-top:6%}
+.tl{height:3px;background:#dfe1ea;border-radius:2px;width:100%}
+.th{height:5px;width:42%;border-radius:2px;margin-top:3px}
+.w90{width:90%}.w80{width:80%}.w70{width:70%}.w60{width:60%}.w50{width:50%}
+
+/* edit workspace */
+.edit-wrap{display:grid;grid-template-columns:1fr 360px;gap:1.2rem;align-items:start}
+.paper-col{min-width:0}
+.paper-tools{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:.9rem;flex-wrap:wrap}
+.tool-left{display:flex;align-items:center;gap:.7rem}
+.tool-right{display:flex;gap:.4rem;flex-wrap:wrap}
+.tpl-select{width:auto;padding:.42rem 2rem .42rem .7rem;font-size:.8rem;font-weight:600}
+.paper-scroll{background:var(--paper-2);border-radius:14px;padding:1.5rem;max-height:calc(100vh - 90px);overflow:auto;display:flex;justify-content:center}
+.side-col{display:flex;flex-direction:column;gap:1rem;position:sticky;top:1rem}
+.match-card .match-top{display:flex;align-items:center;gap:.9rem}
+.ring-wrap{position:relative;width:64px;height:64px;flex-shrink:0}
+.ring-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.05rem;color:var(--ink)}
+.ring-num span{font-size:.6rem;margin-left:1px;color:var(--ink-faint)}
+.match-note{font-size:.76rem;color:var(--ink-soft);margin:.25rem 0 0}
+.missing{margin-top:.9rem;padding-top:.9rem;border-top:1px solid var(--line-2)}
+.missing-l{font-size:.6rem;letter-spacing:.1em;color:var(--ink-faint);display:block;margin-bottom:.45rem}
+
+/* chat */
+.chat{display:flex;flex-direction:column;height:460px}
+.chat-hd{display:flex;align-items:center;gap:.5rem;padding-bottom:.8rem;border-bottom:1px solid var(--line-2);margin-bottom:.2rem}
+.chat-scroll{flex:1;overflow-y:auto;padding:.8rem .1rem;display:flex;flex-direction:column;gap:.7rem}
+.msg{max-width:90%;padding:.6rem .8rem;border-radius:13px;font-size:.85rem;line-height:1.45}
+.msg-assistant{background:var(--paper-2);color:var(--ink-soft);border-bottom-left-radius:4px;align-self:flex-start}
+.msg-user{background:var(--accent);color:#fff;border-bottom-right-radius:4px;align-self:flex-end}
+.quick-actions{display:flex;flex-wrap:wrap;gap:.35rem;padding:.6rem 0}
+.qa{font-size:.72rem;padding:.3rem .55rem;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink-soft);cursor:pointer;transition:.15s}
+.qa:hover{border-color:var(--accent);color:var(--accent)}
+.chat-input{display:flex;gap:.5rem;padding-top:.7rem;border-top:1px solid var(--line-2)}
+.chat-input .field{padding:.55rem .75rem}
+
+/* ---------- résumé paper ---------- */
+.rs-page{background:#fff;color:#1c1c1f;width:100%;max-width:760px;padding:46px 52px;box-shadow:0 12px 50px rgba(0,0,0,.13);border-radius:3px;font-size:13.5px;line-height:1.5}
+.pp-tight{font-size:12.5px;padding:38px 44px}
+.pp-roomy{font-size:14px;padding:54px 58px}
+.rs-head{margin-bottom:1.1em}
+.rs-name{font-family:inherit;font-size:2.3em;font-weight:800;letter-spacing:-0.02em;display:block;line-height:1.05;color:#111}
+.rs-head-serif .rs-name{font-weight:600;letter-spacing:0}
+.rs-headline{display:block;font-size:1.05em;color:#444;margin-top:.15em;font-weight:500}
+.rs-contact{font-size:.82em;color:#555;display:flex;flex-wrap:wrap;gap:.2em 1.1em;margin-top:.5em}
+.rs-side .rs-contact{flex-direction:column;gap:.35em;margin-top:0;margin-bottom:1.4em}
+.rs-rule{height:2px;width:100%;margin-top:.9em;border-radius:2px;opacity:.9}
+.rs-cols{display:grid;grid-template-columns:30% 1fr;gap:0 2em}
+.rs-side{border-right:1px solid #eaeaea;padding-right:1.5em}
+.rs-mainc{min-width:0}
+.rs-sec{margin-bottom:1.25em}
+.rs-title{font-size:.78em;letter-spacing:.12em;text-transform:uppercase;font-weight:700;margin:0 0 .6em;color:#222}
+.rs-serif{font-family:inherit;font-size:1.15em;letter-spacing:.02em;text-transform:none;font-weight:600;border-bottom:1px solid #d8d8d8;padding-bottom:.2em}
+.rs-bar{display:flex;align-items:center;gap:.5em}
+.rs-bar-i{width:14px;height:3px;border-radius:2px;display:inline-block}
+.rs-hair{border-bottom:1.5px solid var(--rink);padding-bottom:.3em;color:#222}
+.rs-mono{font-family:'Space Mono',monospace;font-size:.72em;letter-spacing:.1em}
+.rs-item{margin-bottom:.85em}
+.rs-item:last-child{margin-bottom:0}
+.rs-item-hd{display:flex;align-items:baseline;justify-content:space-between;gap:1em;flex-wrap:wrap}
+.rs-role{font-weight:700;font-size:1.02em;color:#1a1a1a}
+.rs-org{font-weight:500;color:#555;margin-left:.4em}
+.rs-org:before{content:"· "}
+.rs-date{font-size:.78em;color:#777;white-space:nowrap}
+.rs-bullets{margin:.35em 0 0;padding-left:1.1em;list-style:none}
+.rs-bullets li{position:relative;margin-bottom:.28em;padding-left:.2em}
+.rs-bullets li:before{content:"";position:absolute;left:-.85em;top:.55em;width:4px;height:4px;border-radius:50%;background:var(--rink);opacity:.7}
+.rs-pdesc{display:block;color:#444;margin-top:.15em}
+.rs-summary{display:block;color:#3a3a3a;line-height:1.55}
+.rs-skills{display:flex;flex-wrap:wrap;gap:.35em}
+.rs-skill{font-size:.86em;background:#f1f1f4;border:1px solid #e7e7ec;padding:.12em .55em;border-radius:5px;color:#333}
+.rs-side .rs-skill{background:none;border:none;padding:0;display:block;width:100%}
+.rs-side .rs-skill:before{content:"– ";color:#999}
+.rs-skill-add,.add-bullet button,.bl-x{font-family:inherit}
+.rs-skill-add{background:#eee;border:1px dashed #ccc;border-radius:5px;color:#888;cursor:pointer;padding:.1em .4em;display:inline-flex}
+.rs-edu{margin-bottom:.6em}
+.rs-edu-sub{display:flex;justify-content:space-between;gap:1em;flex-wrap:wrap}
+.add-bullet{list-style:none}
+.add-bullet button{background:none;border:none;color:#aaa;cursor:pointer;font-size:.85em;display:inline-flex;align-items:center;gap:.2em;padding:0}
+.add-bullet button:hover{color:var(--accent)}
+.bl-x{background:none;border:none;color:#ccc;cursor:pointer;margin-left:.3em;vertical-align:middle}
+.bl-x:hover{color:#d6336c}
+.editable{outline:none;cursor:text;border-radius:3px;transition:background .1s;min-width:8px;display:inline-block}
+.editable:hover{background:rgba(85,56,238,.06)}
+.editable:focus{background:rgba(85,56,238,.1);box-shadow:0 0 0 2px rgba(85,56,238,.2)}
+.editable:empty:before{content:attr(data-ph);color:#bbb;font-style:italic}
+
+/* cover letter */
+.cover-wrap{max-width:760px}
+.cover-paper{background:#fff;border:1px solid var(--line);border-radius:12px;padding:2rem 2.2rem;box-shadow:var(--shadow);min-height:340px}
+.cover-text{width:100%;border:none;outline:none;resize:vertical;font-family:'Newsreader',Georgia,serif;font-size:1rem;line-height:1.7;color:#2a2a2e;background:transparent;min-height:300px}
+
+/* ---------- modal ---------- */
+.overlay{position:fixed;inset:0;background:rgba(22,23,29,.45);backdrop-filter:blur(3px);z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:5vh 1rem;overflow-y:auto;animation:fade .15s ease}
+@keyframes fade{from{opacity:0}}
+.modal{background:var(--surface);border-radius:18px;box-shadow:var(--shadow-lg);width:100%;max-width:460px;padding:1.5rem 1.6rem;position:relative;animation:pop .18s ease}
+.modal-wide{max-width:580px}
+@keyframes pop{from{opacity:0;transform:translateY(8px) scale(.98)}}
+.modal-x{position:absolute;top:1rem;right:1rem;background:none;border:none;cursor:pointer;color:var(--ink-faint);padding:.25rem;border-radius:8px;display:flex}
+.modal-x:hover{background:var(--paper-2);color:var(--ink)}
+.modal-h{font-size:1.4rem;margin:.5rem 0 .9rem}
+.modal-foot{display:flex;justify-content:flex-end;gap:.6rem;margin-top:1.3rem}
+
+/* ---------- toasts ---------- */
+.toasts{position:fixed;bottom:1.4rem;left:50%;transform:translateX(-50%);z-index:120;display:flex;flex-direction:column;gap:.5rem;align-items:center;pointer-events:none}
+.toast{background:var(--ink);color:#fff;padding:.6rem 1rem;border-radius:11px;font-size:.85rem;font-weight:500;box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:.5rem;animation:toastin .2s ease}
+.toast svg{stroke:#8fe3c4}
+@keyframes toastin{from{opacity:0;transform:translateY(10px)}}
+
+/* ---------- boot ---------- */
+.boot{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;color:var(--ink-faint);font-family:'Space Mono',monospace;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase}
+.boot svg{stroke:var(--accent)}
+
+/* ---------- responsive ---------- */
+@media (max-width:900px){
+  .sidebar{display:none}
+  .mtop{display:flex;align-items:center;justify-content:space-between;gap:.8rem;padding:.7rem 1rem;border-bottom:1px solid var(--line);background:var(--surface);position:sticky;top:0;z-index:40}
+  .mtop .brand{padding:0}
+  .mtop .brand-name{font-size:1.2rem}
+  .mtop .brand-mark{width:26px;height:26px}
+  .page-body{padding:1.4rem 1.1rem 6.5rem}
+  .bottomnav{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:60;background:var(--surface);border-top:1px solid var(--line);padding:.4rem .3rem calc(.4rem + env(safe-area-inset-bottom));justify-content:space-around}
+  .bn-item{display:flex;flex-direction:column;align-items:center;gap:.18rem;background:none;border:none;cursor:pointer;color:var(--ink-faint);font-size:.6rem;font-weight:600;padding:.3rem .5rem;border-radius:9px;flex:1}
+  .bn-item svg{stroke:var(--ink-faint);width:21px;height:21px}
+  .bn-item.on{color:var(--accent)}
+  .bn-item.on svg{stroke:var(--accent)}
+  .dash-grid{grid-template-columns:1fr}
+  .stat-strip{grid-template-columns:1fr 1fr}
+  .profile-grid{grid-template-columns:1fr}
+  .edit-wrap{grid-template-columns:1fr}
+  .side-col{position:static}
+  .paper-scroll{max-height:none;padding:.8rem}
+  .rs-page{padding:32px 26px}
+  .h-xl{font-size:1.85rem}
+  .grid-2{grid-template-columns:1fr}
+  .ph-main{flex-direction:column;align-items:flex-start;gap:.7rem}
+  .ph-actions{padding-bottom:0}
+}
+@media (max-width:560px){
+  .stat-strip{grid-template-columns:1fr 1fr}
+  .rs-cols{grid-template-columns:1fr;gap:0}
+  .rs-side{border-right:none;padding-right:0;border-bottom:1px solid #eee;padding-bottom:1em;margin-bottom:1em}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---------- settings modal ---------- */
+.settings-section{margin-bottom:1.4rem}
+.settings-section:last-child{margin-bottom:0}
+.settings-section-label{font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);margin:0 0 .6rem;display:block}
+.setting-row{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.6rem 0;border-bottom:1px solid var(--line-2)}
+.setting-row:last-child{border-bottom:none}
+.setting-label{font-size:.88rem;font-weight:500;color:var(--ink)}
+.setting-desc{font-size:.72rem;color:var(--ink-faint);margin:.1rem 0 0;line-height:1.3}
+.toggle{position:relative;width:38px;height:22px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.toggle-track{position:absolute;inset:0;background:var(--line);border-radius:99px;cursor:pointer;transition:.2s}
+.toggle input:checked+.toggle-track{background:var(--accent)}
+.toggle-track:before{content:'';position:absolute;width:16px;height:16px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.toggle input:checked+.toggle-track:before{left:19px}
+/* ---------- auth screen ---------- */
+.auth-page{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--paper);padding:1.5rem}
+.auth-card{width:100%;max-width:400px;padding:2rem 2.2rem}
+.auth-brand{display:flex;align-items:center;gap:.6rem;margin-bottom:1.8rem}
+.auth-h{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.5rem;letter-spacing:-.02em;margin:0 0 1.4rem}
+.auth-error{font-size:.82rem;color:#b91c1c;background:#fef2f2;border:1px solid #fecaca;border-radius:9px;padding:.55rem .75rem;margin:.8rem 0 0}
+.auth-success{font-size:.82rem;color:var(--jade);background:var(--jade-soft);border-radius:9px;padding:.55rem .75rem;margin:.8rem 0 0}
+.auth-switch{text-align:center;font-size:.82rem;color:var(--ink-soft);margin:1.1rem 0 0}
+.auth-divider{text-align:center;font-size:.72rem;color:var(--ink-faint);margin:.9rem 0;position:relative}
+.auth-divider:before{content:'';position:absolute;left:0;top:50%;width:100%;height:1px;background:var(--line)}
+.auth-divider span{background:var(--surface);position:relative;padding:0 .6rem}
+
+/* ---------- print ---------- */
+@media print{
+  body{background:#fff}
+  .no-print{display:none!important}
+  body *{visibility:hidden!important}
+  .printable,.printable *{visibility:visible!important}
+  .printable{position:absolute!important;left:0;top:0;width:100%;max-width:100%;box-shadow:none!important;margin:0!important;padding:0!important}
+  .editable:hover,.editable:focus{background:none!important;box-shadow:none!important}
+  @page{margin:14mm}
+}
+</style>
+</head>
+<body>
+<div id="root"><div class="boot"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" class="spin"><path d="M12 3v4M12 17v4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M3 12h4M17 12h4M5.6 18.4l2.8-2.8M15.6 8.4l2.8-2.8"/></svg><div>Preparing Tally…</div></div></div>
+
+<script src="config.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.24.7/babel.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+  const _cfg = window.TALLY_CONFIG || {};
+  window._sb = supabase.createClient(_cfg.supabaseUrl, _cfg.supabaseKey);
+</script>
+
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useRef, useMemo, createContext, useContext } = React;
+
+/* ============================== icons ============================== */
+const ICONS = {
+  home:'<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/>',
+  book:'<path d="M12 6.5C10.5 5 8 4.5 4 4.5V19c4 0 6.5.5 8 2 1.5-1.5 4-2 8-2V4.5c-4 0-6.5.5-8 2Z"/><path d="M12 6.5V21"/>',
+  user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-6 8-6s8 2 8 6"/>',
+  users:'<circle cx="9" cy="8" r="3.4"/><path d="M2.5 20c0-3.4 3-5.4 6.5-5.4s6.5 2 6.5 5.4"/><path d="M16 5a3.4 3.4 0 0 1 0 6.6"/><path d="M17 14.7c2.5.5 4.3 2.2 4.3 5.3"/>',
+  file:'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  pluscircle:'<circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/>',
+  search:'<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
+  sparkles:'<path d="M12 3l1.7 4.6L18 9.3l-4.3 1.7L12 16l-1.7-5L6 9.3l4.3-1.7Z"/><path d="M19 13.5l.6 1.6 1.6.6-1.6.6-.6 1.6-.6-1.6-1.6-.6 1.6-.6Z"/>',
+  wand:'<path d="m3 21 11-11"/><path d="m12 6 6 6"/><path d="M18 3v3M21 6h-3M16 4.5l-1 1"/>',
+  loader:'<path d="M12 3v4M12 17v4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M3 12h4M17 12h4M5.6 18.4l2.8-2.8M15.6 8.4l2.8-2.8"/>',
+  refresh:'<path d="M20.5 12a8.5 8.5 0 1 1-2.6-6.1L21 8"/><path d="M21 4v4h-4"/>',
+  trending:'<path d="M3 17 10 10l4 4 7-7"/><path d="M15 7h6v6"/>',
+  settings:'<path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>',
+  trash:'<path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M6 7l1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13"/><path d="M10 11v6M14 11v6"/>',
+  pencil:'<path d="M4 20h4L19 9l-4-4L4 16Z"/><path d="m14 6 4 4"/>',
+  check:'<path d="M5 12.5 10 17 19 7"/>',
+  x:'<path d="M6 6l12 12M18 6 6 18"/>',
+  chevright:'<path d="m9 6 6 6-6 6"/>',
+  chevdown:'<path d="m6 9 6 6 6-6"/>',
+  arrowleft:'<path d="M19 12H5M11 6l-6 6 6 6"/>',
+  download:'<path d="M12 3v12M7 11l5 5 5-5"/><path d="M4 21h16"/>',
+  copy:'<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2"/>',
+  send:'<path d="M21 3 10.5 13.5"/><path d="M21 3 14.5 21l-4-7.5L3 9.5Z"/>',
+  upload:'<path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 20h16"/>',
+  message:'<path d="M4 5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H9l-5 4Z"/>',
+  eye:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>',
+  globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.4 2.5 3.7 5.6 3.7 9S14.4 18.5 12 21c-2.4-2.5-3.7-5.6-3.7-9S9.6 5.5 12 3Z"/>',
+  lock:'<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+  mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
+  phone:'<path d="M6 3h3l2 5-2.5 1.5a11 11 0 0 0 5 5L17 13l5 2v3a2 2 0 0 1-2 2A16 16 0 0 1 4 5a2 2 0 0 1 2-2Z"/>',
+  pin:'<path d="M12 21s7-6 7-11a7 7 0 0 0-14 0c0 5 7 11 7 11Z"/><circle cx="12" cy="10" r="2.5"/>',
+  building:'<rect x="6" y="3" width="12" height="18" rx="1"/><path d="M9 7h2M13 7h2M9 11h2M13 11h2M10 21v-3h4v3"/>',
+  calendar:'<rect x="4" y="5" width="16" height="16" rx="2"/><path d="M4 9h16M8 3v4M16 3v4"/>',
+  tag:'<path d="M3 12V4a1 1 0 0 1 1-1h8l9 9-9 9Z"/><circle cx="7.5" cy="7.5" r="1.3"/>',
+  link:'<path d="M9 12h6"/><path d="M8.5 8H6a4 4 0 0 0 0 8h2.5M15.5 8H18a4 4 0 0 1 0 8h-2.5"/>',
+  linkedin:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="7" cy="8" r="1"/><path d="M7 11v6"/><path d="M11 17v-3.4a2.6 2.6 0 0 1 5.2 0V17"/><path d="M11.4 11v6"/>',
+  target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4"/>',
+  layers:'<path d="M12 3 3 8l9 5 9-5Z"/><path d="m3 13 9 5 9-5"/>',
+  bulb:'<path d="M9.5 18h5M10.5 21h3"/><path d="M12 3a6 6 0 0 0-3.8 10.6c.6.6.9 1.4.9 2.4h5.8c0-1 .3-1.8.9-2.4A6 6 0 0 0 12 3Z"/>',
+  flame:'<path d="M12 3c1.2 3.2 4.2 4.4 4.2 8.2a4.2 4.2 0 0 1-8.4 0c0-1.6.6-2.8 1.6-3.8.4 1 1 1.6 1.6 1.6-.4-2 .2-4 1-6Z"/>',
+  badge:'<path d="m9 12 2 2 4-4"/><path d="M12 3.2 14 4.7l2.5-.2.9 2.3 2.1 1.3-.6 2.4.6 2.4-2.1 1.3-.9 2.3-2.5-.2L12 19.8 10 18.3l-2.5.2-.9-2.3-2.1-1.3.6-2.4-.6-2.4 2.1-1.3.9-2.3 2.5.2Z"/>',
+  star:'<path d="m12 3 2.5 5.4 5.9.8-4.3 4.1 1 5.9L12 17.6 6.9 19.9l1-5.9-4.3-4.1 5.9-.8Z"/>',
+  heart:'<path d="M12 20s-7-4.5-7-9.5A4 4 0 0 1 12 7a4 4 0 0 1 7 3.5C19 15.5 12 20 12 20Z"/>',
+  trophy:'<path d="M8 4h8v5a4 4 0 0 1-8 0Z"/><path d="M8 5.5H5.5V7a3 3 0 0 0 3 3M16 5.5h2.5V7a3 3 0 0 1-3 3"/><path d="M12 13v4M9 21h6M10 17h4"/>',
+  briefcase:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/>',
+  grad:'<path d="m2 9 10-4 10 4-10 4Z"/><path d="M6 11v3.5c0 1.4 2.7 2.5 6 2.5s6-1.1 6-2.5V11"/><path d="M22 9v5"/>',
+  award:'<circle cx="12" cy="9" r="5"/><path d="m9 13-2 8 5-3 5 3-2-8"/>',
+  quote:'<path d="M9 7c-2 .7-3 2.3-3 4.5V17h5v-5H7.5c0-1.3.6-2 1.5-2.3Z"/><path d="M18 7c-2 .7-3 2.3-3 4.5V17h5v-5h-2.5c0-1.3.6-2 1.5-2.3Z"/>',
+  zap:'<path d="M13 2 4 14h6l-1 8 9-12h-6Z"/>',
+};
+function Icon({ name, size=18, fill='none', strokeWidth=2, className='', style }){
+  return <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill={fill} stroke="currentColor"
+    strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" style={style}
+    dangerouslySetInnerHTML={{ __html: ICONS[name] || ICONS.star }} />;
+}
+
+/* ============================== constants ============================== */
+const K = { profile:'tally.profile', entries:'tally.entries', resumes:'tally.resumes', community:'tally.community', settings:'tally.settings' };
+const CATEGORIES = ['Work','Project','Award','Learning','Volunteer','Leadership','Milestone','Other'];
+const CAT = {
+  Work:{icon:'briefcase',cls:'cat-Work'}, Project:{icon:'layers',cls:'cat-Project'},
+  Award:{icon:'trophy',cls:'cat-Award'}, Learning:{icon:'grad',cls:'cat-Learning'},
+  Volunteer:{icon:'heart',cls:'cat-Volunteer'}, Leadership:{icon:'users',cls:'cat-Leadership'},
+  Milestone:{icon:'flame',cls:'cat-Milestone'}, Other:{icon:'star',cls:'cat-Other'},
+};
+const catIcon = (c) => (CAT[c]||CAT.Other).icon;
+const catCls = (c) => (CAT[c]||CAT.Other).cls;
+const SKILL_DICT = ['Python','JavaScript','TypeScript','React','Node.js','SQL','Java','C++','HTML','CSS','AWS','Docker','Kubernetes','Git','Figma','Excel','Tableau','Machine Learning','Data Analysis','Project Management','Leadership','Communication','Public Speaking','Marketing','SEO','Sales','Design','UX Design','UI Design','Product Management','Agile','Scrum','Research','Writing','Go','Rust','Swift','Kotlin','TensorFlow','PyTorch','Pandas','NumPy','MATLAB','Photoshop','Illustrator','Salesforce','Notion','Jira','Linux','REST APIs','GraphQL','MongoDB','PostgreSQL','Firebase','Teamwork','Problem Solving','Negotiation','Budgeting','Event Planning','Fundraising','Mentoring','Teaching','Customer Service','Data Visualization','A/B Testing','Stakeholder Management','Recruiting','Operations'];
+const ACCOUNT_TYPES = [
+  { value:'hs-student',       label:'High School Student',              icon:'grad',      desc:'Focused on academics, extracurriculars, and early experience.' },
+  { value:'hs-employee',      label:'High School Student Worker',       icon:'briefcase', desc:'Currently in high school and also working part-time or full-time.' },
+  { value:'college-student',  label:'College / University Student',     icon:'grad',      desc:'Currently enrolled in higher education.' },
+  { value:'college-employee', label:'College Student Worker',           icon:'briefcase', desc:'In college and also employed part-time or full-time.' },
+  { value:'professional',     label:'Professional / Workforce',         icon:'building',  desc:'Full-time career, no longer in K–12 or undergrad.' },
+];
+const accountTypeLabel = (v) => (ACCOUNT_TYPES.find(t=>t.value===v)||{}).label || '';
+
+const TEMPLATE_CFG = {
+  Editorial:{cols:1, accent:'#161616', fam:"'Newsreader', Georgia, serif", head:'serif', density:'roomy', blurb:'Classic serif. Executive feel.'},
+  Modern:{cols:1, accent:'#5538EE', fam:"'Inter', sans-serif", head:'bar', density:'normal', blurb:'Accent bars, crisp & current.'},
+  Minimal:{cols:1, accent:'#16171D', fam:"'Inter', sans-serif", head:'hair', density:'roomy', blurb:'Whitespace, hairlines, restraint.'},
+  Compact:{cols:2, accent:'#26303A', fam:"'Inter', sans-serif", head:'plain', density:'tight', blurb:'Two columns, dense, ATS-safe.'},
+  Technical:{cols:2, accent:'#5538EE', fam:"'Inter', sans-serif", head:'mono', density:'normal', blurb:'Skills sidebar, mono labels.'},
+};
+
+/* ============================== utils ============================== */
+const uid = () => Math.random().toString(36).slice(2,9);
+const clone = (o) => JSON.parse(JSON.stringify(o));
+const titleCase = (s='') => s.replace(/\w\S*/g, t => t.charAt(0).toUpperCase()+t.slice(1));
+function fmtDate(d){
+  if(!d) return '';
+  const dt = new Date(d);
+  if(!isNaN(dt) && /\d{4}-\d{2}/.test(String(d))) return dt.toLocaleDateString(undefined,{month:'short',year:'numeric'});
+  return String(d);
+}
+function recDate(d){
+  const dt = d ? new Date(d) : new Date();
+  if(isNaN(dt)) return String(d);
+  return `${dt.getFullYear()} · ${String(dt.getMonth()+1).padStart(2,'0')}`;
+}
+const STORAGE_OK = typeof window!=='undefined' && !!window.storage;
+const CLAUDE_KEY = (window.TALLY_CONFIG||{}).claudeKey||'';
+const store = {
+  get: async (k, fb) => {
+    if(STORAGE_OK){ try{ const r = await window.storage.get(k); return r ? JSON.parse(r.value) : fb; }catch(e){} }
+    try{ const v = localStorage.getItem(k); return v !== null ? JSON.parse(v) : fb; }catch(e){ return fb; }
+  },
+  set: async (k, v) => {
+    if(STORAGE_OK){ try{ await window.storage.set(k, JSON.stringify(v)); }catch(e){} }
+    try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){}
+  },
+};
+function parseJSON(text){
+  if(!text) return null;
+  let t = String(text).trim().replace(/^```(?:json)?/i,'').replace(/```$/,'').trim();
+  try{ return JSON.parse(t); }catch(e){}
+  const m = t.match(/[\[{][\s\S]*[\]}]/);
+  if(m){ try{ return JSON.parse(m[0]); }catch(e){} }
+  return null;
+}
+async function callAI({ system, user, messages, attachments }){
+  if(typeof fetch==='undefined') throw new Error('no-fetch');
+  let msgs;
+  if(messages) msgs = messages;
+  else if(attachments && attachments.length){
+    msgs = [{ role:'user', content:[
+      ...attachments.map(a => a.kind==='document'
+        ? { type:'document', source:{ type:'base64', media_type:a.mime, data:a.b64 } }
+        : { type:'image', source:{ type:'base64', media_type:a.mime, data:a.b64 } }),
+      { type:'text', text:user }
+    ]}];
+  } else msgs = [{ role:'user', content:user }];
+  const body = { model:'claude-sonnet-4-6', max_tokens: system&&system.includes('résumé writer') ? 6000 : 2000, messages:msgs };
+  if(system) body.system = system;
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'x-api-key': CLAUDE_KEY,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true',
+    },
+    body:JSON.stringify(body)
+  });
+  if(!res.ok) throw new Error('api-'+res.status);
+  const data = await res.json();
+  return (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\n');
+}
+function detectCategory(t){
+  const s = t.toLowerCase();
+  const has = (...w)=>w.some(x=>s.includes(x));
+  if(has('won','awarded','first place','finalist','scholarship','prize','medal','honor','recognized','dean')) return 'Award';
+  if(has('promoted','promotion','graduated','accepted offer','got the offer','milestone','anniversary')) return 'Milestone';
+  if(has('led ','managed','mentored','directed','oversaw','captain','president','head of','coordinated a team')) return 'Leadership';
+  if(has('learned','completed a course','certification','certified','course','bootcamp','workshop','training','studied','degree')) return 'Learning';
+  if(has('volunteer','fundraiser','nonprofit','charity','community service','donated')) return 'Volunteer';
+  if(has('built','created','developed','designed','launched','shipped','prototype','app','website','feature','system')) return 'Project';
+  if(has('intern','job','hired','client','role at','worked at','position','employed','responsible for')) return 'Work';
+  return 'Other';
+}
+function extractSkills(t){
+  const s = t.toLowerCase(); const out = [];
+  for(const sk of SKILL_DICT){ if(s.includes(sk.toLowerCase()) && !out.includes(sk)) out.push(sk); }
+  return out.slice(0,8);
+}
+function extractMetrics(t){
+  const out = [];
+  const re1 = /(?:increased|reduced|grew|saved|raised|generated|improved|boosted|cut|drove|led to|resulting in)[^.]*?\d[^.]*/gi;
+  const re2 = /(?:\$[\d,]+|\d+(?:\.\d+)?%|\b\d[\d,]*\s?(?:users|people|members|students|hours|projects|downloads|sign-?ups|customers|clients|teammates|engineers|attendees|views|teams)\b)/gi;
+  (t.match(re1)||[]).forEach(m=>out.push(m.trim().replace(/\s+/g,' ')));
+  if(out.length<2) (t.match(re2)||[]).forEach(m=>{ if(out.length<3) out.push(m.trim()); });
+  return [...new Set(out)].slice(0,3);
+}
+function localStructure(raw, hint){
+  const text = raw.trim();
+  const first = (text.split(/[.!?\n]/)[0]||text).trim();
+  return {
+    title: titleCase(first.length>70 ? first.slice(0,67)+'…' : first) || 'Untitled entry',
+    category: hint && hint!=='Auto' ? hint : detectCategory(text),
+    organization:null, role:null, date:new Date().toISOString().slice(0,10),
+    skills:extractSkills(text), metrics:extractMetrics(text),
+    summary: text.length>240 ? text.slice(0,237)+'…' : text, tags:[],
+  };
+}
+function aggregateSkills(entries){
+  const map = {};
+  entries.forEach(e => (e.skills||[]).forEach(s => { map[s] = (map[s]||0)+1; }));
+  return Object.entries(map).sort((a,b)=>b[1]-a[1]).map(([name,count])=>({name,count}));
+}
+function currentRoles(entries){
+  return entries.filter(e => e.current && (e.role||e.organization||e.title)).map(e => ({ role:e.role||e.title, org:e.organization||'', id:e.id }));
+}
+const STOP = new Set('the and for with you your our are will who that this have from they role team work years year experience strong ability skills using able including across want need looking ideal candidate plus must should preferred required responsibilities qualifications about within their them what when into more than also been very job company position role we us a an to in of on at as is it be or by'.split(' '));
+const tokens = (s='') => [...new Set((s.toLowerCase().match(/[a-z][a-z+.#-]{2,}/g)||[]).filter(w=>!STOP.has(w)))];
+function buildLocalResume(profile, entries, target){
+  const jt = tokens(`${target.title} ${target.jobText}`);
+  const score = (e) => { const et = tokens(`${e.title} ${e.summary} ${(e.skills||[]).join(' ')} ${(e.metrics||[]).join(' ')}`); return et.filter(t=>jt.includes(t)).length; };
+  const sorted = [...entries].sort((a,b)=>score(b)-score(a));
+  const work = sorted.filter(e=>['Work','Leadership','Milestone'].includes(e.category));
+  const proj = sorted.filter(e=>e.category==='Project');
+  const learn = entries.filter(e=>e.category==='Learning');
+  const vol = entries.filter(e=>e.category==='Volunteer');
+  const awards = entries.filter(e=>e.category==='Award');
+  const skills = aggregateSkills(sorted).slice(0,24).map(s=>s.name);
+  const mand = (target.mandatory||'').split('\n').map(s=>s.trim()).filter(Boolean);
+
+  const expandBullets = (e) => {
+    const base = [];
+    if(e.summary) base.push(e.summary);
+    (e.metrics||[]).forEach(m => base.push(m));
+    if(e.skills&&e.skills.length) base.push(`Skills used: ${e.skills.slice(0,5).join(', ')}.`);
+    return base.filter(Boolean).slice(0,7);
+  };
+
+  const summary = [
+    `${profile.headline||'Motivated professional'} with demonstrated experience in ${skills.slice(0,3).join(', ')}.`,
+    work[0] ? `Accomplished highlights include ${work[0].title.toLowerCase()}${work[1]?' and '+work[1].title.toLowerCase():''}, reflecting a consistent pattern of high-impact contributions.` : '',
+    proj[0] ? `Also built hands-on projects such as ${proj[0].title.toLowerCase()}, demonstrating initiative beyond formal roles.` : '',
+    target.title ? `Currently seeking ${target.title} opportunities where I can leverage this background to drive meaningful results.` : '',
+    mand.length ? `Directly meets stated requirements including: ${mand.slice(0,3).join('; ')}.` : '',
+  ].filter(Boolean).join(' ');
+
+  return {
+    name: profile.name||'Your Name',
+    headline: target.title||profile.headline||'',
+    contact:{ email:profile.email||'', phone:profile.phone||'', location:profile.location||'', links: profile.linkedin?[profile.linkedin]:[] },
+    summary,
+    experience: work.slice(0,8).map(e=>({ role:e.role||e.title, organization:e.organization||'', location:'', start:fmtDate(e.date)||'', end:e.current?'Present':'', bullets:expandBullets(e) })),
+    projects: proj.slice(0,5).map(e=>({ name:e.title, description:e.summary, bullets:[...(e.metrics||[]), ...(e.skills||[]).slice(0,3).map(s=>`Utilized ${s}`)].slice(0,5) })),
+    education: learn.filter(e=>/degree|bachelor|master|university|college|b\.?s|b\.?a|high school|diploma|graduate/i.test(`${e.title} ${e.summary}`)).slice(0,3).map(e=>({ credential:e.title, institution:e.organization||'', year:fmtDate(e.date), details:e.summary })),
+    certifications: learn.filter(e=>/cert|course|bootcamp|workshop|training/i.test(`${e.title} ${e.summary}`)).slice(0,8).map(e=>e.title),
+    volunteer: vol.slice(0,4).map(e=>({ role:e.role||e.title, organization:e.organization||'', bullets:expandBullets(e).slice(0,4) })),
+    skills,
+    awards: awards.slice(0,8).map(e=>({ title:e.title, description:e.summary })),
+  };
+}
+function computeMatch(resume, jobText){
+  if(!jobText || !jobText.trim()) return null;
+  const jt = tokens(jobText); if(!jt.length) return null;
+  const blob = JSON.stringify(resume).toLowerCase();
+  const matched = jt.filter(t=>blob.includes(t));
+  const missing = jt.filter(t=>!blob.includes(t));
+  return { pct: Math.min(99, Math.round(matched.length/jt.length*100)), matched:matched.slice(0,12), missing:missing.slice(0,8) };
+}
+function resumeToText(r){
+  const L = [r.name]; if(r.headline) L.push(r.headline);
+  const c = [r.contact&&r.contact.email, r.contact&&r.contact.phone, r.contact&&r.contact.location, ...((r.contact&&r.contact.links)||[])].filter(Boolean);
+  if(c.length) L.push(c.join('  |  '));
+  if(r.summary) L.push('\nSUMMARY\n'+r.summary);
+  if(r.experience&&r.experience.length){ L.push('\nEXPERIENCE'); r.experience.forEach(e=>{ L.push(`${e.role}${e.organization?', '+e.organization:''}${(e.start||e.end)?`  (${[e.start,e.end].filter(Boolean).join(' – ')})`:''}`); (e.bullets||[]).forEach(b=>L.push('• '+b)); }); }
+  if(r.projects&&r.projects.length){ L.push('\nPROJECTS'); r.projects.forEach(p=>{ L.push(p.name+(p.description?' — '+p.description:'')); (p.bullets||[]).forEach(b=>L.push('• '+b)); }); }
+  if(r.skills&&r.skills.length) L.push('\nSKILLS\n'+r.skills.join(', '));
+  if(r.education&&r.education.length){ L.push('\nEDUCATION'); r.education.forEach(e=>L.push(`${e.credential}${e.institution?', '+e.institution:''}${e.year?'  ('+e.year+')':''}`)); }
+  if(r.certifications&&r.certifications.length) L.push('\nCERTIFICATIONS\n'+r.certifications.join(', '));
+  if(r.awards&&r.awards.length) L.push('\nAWARDS\n'+r.awards.join(', '));
+  return L.join('\n');
+}
+function buildLocalCover(profile, entries, target){
+  const top = entries.slice(0,2).map(e=>e.title).join(' and ');
+  return `Dear Hiring Team,\n\nI'm writing to apply for the ${target.title||'role'}${target.company?` at ${target.company}`:''}. ${profile.headline||'My background'} has given me hands-on experience that maps closely to what you're looking for.\n\nRecently I ${top?top.toLowerCase():'have taken on work that stretched my skills'}, and I bring strength in ${aggregateSkills(entries).slice(0,3).map(s=>s.name).join(', ')||'cross-functional execution'}. ${target.mandatory?`I also meet your key requirements, including ${target.mandatory.split('\n')[0]}.`:''}\n\nI'd welcome the chance to discuss how I can contribute. Thank you for your time and consideration.\n\nWarm regards,\n${profile.name||'Your Name'}`;
+}
+
+/* ============================== seed ============================== */
+const SEED = {
+  profile:{ name:'', headline:'', location:'', email:'', phone:'', linkedin:'', summary:'', avatar:'·', accountType:'' },
+  entries:[],
+  community:{ likes:[], comments:{}, posts:[], connections:[] },
+  settings:{ publicProfile:true, seeded:true, darkMode:false, autoPostPublic:false, defaultVisibility:'private', aiTone:'Professional', compactView:false },
+};
+
+/* ============================== context ============================== */
+const Ctx = createContext(null);
+const useApp = () => useContext(Ctx);
+
+/* ============================== primitives ============================== */
+function Btn({ children, variant='primary', size='md', className='', ...p }){
+  return <button className={`btn btn-${variant} ${size==='sm'?'btn-sm':''} ${className}`} {...p}>{children}</button>;
+}
+function Eyebrow({ children, className='' }){ return <div className={`eyebrow ${className}`}>{children}</div>; }
+function Spinner({ size=16 }){ return <Icon name="loader" size={size} className="spin" />; }
+function Avatar({ initials, size=40, accent }){
+  return <div className="avatar" style={{ width:size, height:size, fontSize:size*0.38, background:accent||'var(--ink)' }}>{initials}</div>;
+}
+function CatBadge({ cat }){ return <span className={`badge ${catCls(cat)}`}><Icon name={catIcon(cat)} size={12} strokeWidth={2.4}/>{cat}</span>; }
+function Chip({ children, onRemove, tone }){
+  return <span className={`chip ${tone==='accent'?'chip-accent':''}`}>{children}{onRemove && <button className="chip-x" onClick={onRemove}><Icon name="x" size={11}/></button>}</span>;
+}
+function Modal({ open, onClose, children, wide }){
+  useEffect(()=>{ if(!open) return; const f=(e)=>{ if(e.key==='Escape') onClose(); }; window.addEventListener('keydown',f); return ()=>window.removeEventListener('keydown',f); },[open,onClose]);
+  if(!open) return null;
+  return (
+    <div className="overlay no-print" onMouseDown={onClose}>
+      <div className={`modal ${wide?'modal-wide':''}`} onMouseDown={e=>e.stopPropagation()}>
+        <button className="modal-x" onClick={onClose}><Icon name="x" size={18}/></button>
+        {children}
+      </div>
+    </div>
+  );
+}
+function Editable({ value, onChange, multiline, className='', placeholder }){
+  const ref = useRef(null);
+  useEffect(()=>{ if(ref.current && ref.current.innerText !== (value||'')) ref.current.innerText = value||''; }, [value]);
+  return <span ref={ref} className={`editable ${className}`} contentEditable suppressContentEditableWarning data-ph={placeholder||''}
+    style={{ whiteSpace: multiline?'pre-wrap':'normal' }} onBlur={e=>onChange(e.currentTarget.innerText)} />;
+}
+function MatchRing({ pct }){
+  const r=26, c=2*Math.PI*r, off=c-(pct/100)*c;
+  return (
+    <div className="ring-wrap">
+      <svg width="64" height="64" viewBox="0 0 64 64">
+        <circle cx="32" cy="32" r={r} fill="none" stroke="var(--line)" strokeWidth="6"/>
+        <circle cx="32" cy="32" r={r} fill="none" stroke="var(--accent)" strokeWidth="6" strokeLinecap="round" strokeDasharray={c} strokeDashoffset={off} transform="rotate(-90 32 32)"/>
+      </svg>
+      <div className="ring-num">{pct}<span>%</span></div>
+    </div>
+  );
+}
+
+/* ============================== logging ============================== */
+async function structureEntry(raw, hint, setAiOn){
+  try{
+    const system = `You are the logging engine for a career journal. The user logs an accomplishment in free text. Extract one structured record. Respond with ONLY valid JSON, no markdown, no commentary. Schema: {"title": short headline under 9 words, "category": one of [Work, Project, Award, Learning, Volunteer, Leadership, Milestone, Other], "organization": string or null, "role": string or null, "date": ISO date or null, "skills": array of up to 6 concise skill names, "metrics": array of up to 3 short quantified-impact phrases drawn only from the text, "summary": one polished 1-2 sentence description, "tags": array}. Stay faithful, never invent facts. ${hint && hint!=='Auto'?`The user hinted the category is "${hint}".`:''}`;
+    const out = await callAI({ system, user: raw });
+    const j = parseJSON(out);
+    if(j && j.title){ setAiOn(true); return { ...localStructure(raw,hint), ...j, date: j.date || new Date().toISOString().slice(0,10) }; }
+    throw new Error('parse');
+  }catch(e){ setAiOn(false); return localStructure(raw, hint); }
+}
+
+function Composer({ big }){
+  const { logEntry, notify } = useApp();
+  const [draft,setDraft] = useState('');
+  const [hint,setHint] = useState('Auto');
+  const [busy,setBusy] = useState(false);
+  const submit = async () => {
+    if(!draft.trim() || busy) return;
+    setBusy(true);
+    await logEntry(draft, hint);
+    setDraft(''); setHint('Auto'); setBusy(false);
+    notify('Logged to your record');
+  };
+  return (
+    <div className={`composer ${big?'composer-big':''}`}>
+      <div className="composer-head">
+        <Eyebrow><Icon name="pencil" size={12}/> New record</Eyebrow>
+        <span className="mono dim">{recDate()}</span>
+      </div>
+      <textarea className="composer-input" rows={big?3:2} value={draft}
+        placeholder={'What did you accomplish? "Led a redesign that cut drop-off 22%…"'}
+        onChange={e=>setDraft(e.target.value)}
+        onKeyDown={e=>{ if((e.metaKey||e.ctrlKey)&&e.key==='Enter') submit(); }} />
+      <div className="composer-foot">
+        <div className="hint-row">
+          {['Auto',...CATEGORIES].slice(0,6).map(c => (
+            <button key={c} className={`hint ${hint===c?'hint-on':''}`} onClick={()=>setHint(c)}>{c}</button>
+          ))}
+        </div>
+        <Btn onClick={submit} disabled={!draft.trim()||busy}>{busy?<Spinner/>:<Icon name="sparkles" size={15}/>}{busy?'Filing…':'Log it'}</Btn>
+      </div>
+    </div>
+  );
+}
+
+/* ============================== entry card + editor ============================== */
+function EntryCard({ e, index }){
+  const { updateEntry, deleteEntry } = useApp();
+  const [edit,setEdit] = useState(false);
+  return (
+    <React.Fragment>
+    <div className="rec card">
+      <div className="rec-rail">
+        <span className="rec-no mono">№ {String(index).padStart(3,'0')}</span>
+        <span className="rec-dot"><Icon name={catIcon(e.category)} size={15} strokeWidth={2.3}/></span>
+      </div>
+      <div className="rec-body">
+        <div className="rec-top">
+          <h3 className="rec-title font-display">{e.title}</h3>
+          <div className="rec-actions">
+            <button className="ic-btn" title="Edit" onClick={()=>setEdit(true)}><Icon name="pencil" size={14}/></button>
+            <button className="ic-btn" title="Delete" onClick={()=>deleteEntry(e.id)}><Icon name="trash" size={14}/></button>
+          </div>
+        </div>
+        <div className="rec-meta mono">
+          <span>{recDate(e.date)}</span>
+          {(e.organization||e.role) && <React.Fragment><span className="sep">/</span><span>{[e.role,e.organization].filter(Boolean).join(' · ')}</span></React.Fragment>}
+          {e.current && <span className="now-tag">NOW</span>}
+          <span className="sep">/</span>
+          <span className="vis">{e.visibility==='public'? <React.Fragment><Icon name="globe" size={11}/>Public</React.Fragment> : <React.Fragment><Icon name="lock" size={11}/>Private</React.Fragment>}</span>
+        </div>
+        <p className="rec-summary">{e.summary}</p>
+        {(e.metrics&&e.metrics.length>0) && (
+          <div className="metrics">{e.metrics.map((m,i)=><span key={i} className="metric"><Icon name="trending" size={12}/>{m}</span>)}</div>
+        )}
+        {(e.skills&&e.skills.length>0) && (
+          <div className="chip-row">{e.skills.map((s,i)=><span key={i} className="chip-mini">{s}</span>)}</div>
+        )}
+      </div>
+    </div>
+    {edit && <EntryEditor e={e} onClose={()=>setEdit(false)} onSave={(u)=>{ updateEntry(e.id,u); setEdit(false); }} />}
+    </React.Fragment>
+  );
+}
+
+function EntryEditor({ e, onClose, onSave }){
+  const [f,setF] = useState({ ...e, skills:(e.skills||[]).join(', '), metrics:(e.metrics||[]).join('\n') });
+  const set = (k,v)=>setF(p=>({...p,[k]:v}));
+  const save = () => onSave({ ...f, skills: f.skills.split(',').map(s=>s.trim()).filter(Boolean), metrics: f.metrics.split('\n').map(s=>s.trim()).filter(Boolean) });
+  return (
+    <Modal open onClose={onClose} wide>
+      <Eyebrow><Icon name="pencil" size={12}/> Edit record</Eyebrow>
+      <input className="field h1-field" value={f.title} onChange={e=>set('title',e.target.value)} />
+      <div className="grid-2">
+        <label className="lbl">Category
+          <select className="field" value={f.category} onChange={e=>set('category',e.target.value)}>{CATEGORIES.map(c=><option key={c}>{c}</option>)}</select>
+        </label>
+        <label className="lbl">Date
+          <input className="field" type="date" value={(f.date||'').slice(0,10)} onChange={e=>set('date',e.target.value)} />
+        </label>
+        <label className="lbl">Organization
+          <input className="field" value={f.organization||''} onChange={e=>set('organization',e.target.value)} placeholder="e.g. Northstar Labs"/>
+        </label>
+        <label className="lbl">Role / Title
+          <input className="field" value={f.role||''} onChange={e=>set('role',e.target.value)} placeholder="e.g. Product Intern"/>
+        </label>
+      </div>
+      <label className="lbl">Summary
+        <textarea className="field" rows={3} value={f.summary} onChange={e=>set('summary',e.target.value)} />
+      </label>
+      <div className="grid-2">
+        <label className="lbl">Skills <span className="dim">(comma separated)</span>
+          <input className="field" value={f.skills} onChange={e=>set('skills',e.target.value)} />
+        </label>
+        <label className="lbl">Impact / metrics <span className="dim">(one per line)</span>
+          <textarea className="field" rows={2} value={f.metrics} onChange={e=>set('metrics',e.target.value)} />
+        </label>
+      </div>
+      <div className="toggle-row">
+        <label className="switch"><input type="checkbox" checked={f.current||false} onChange={e=>set('current',e.target.checked)}/><span>This is a current role</span></label>
+        <label className="switch"><input type="checkbox" checked={f.visibility==='public'} onChange={e=>set('visibility', e.target.checked?'public':'private')}/><span>Show on public profile</span></label>
+      </div>
+      <div className="modal-foot">
+        <Btn variant="ghost" onClick={onClose}>Cancel</Btn>
+        <Btn onClick={save}><Icon name="check" size={15}/>Save record</Btn>
+      </div>
+    </Modal>
+  );
+}
+
+/* ============================== empty ============================== */
+function Empty({ label }){ return <div className="empty"><div className="empty-mark"><Icon name="sparkles" size={18}/></div><p>{label}</p></div>; }
+
+/* ============================== dashboard ============================== */
+function Dashboard(){
+  const { entries, profile, setView } = useApp();
+  const recent = [...entries].sort((a,b)=>b.createdAt-a.createdAt);
+  const now = new Date();
+  const thisMonth = entries.filter(e => { const d=new Date(e.date); return d.getMonth()===now.getMonth() && d.getFullYear()===now.getFullYear(); }).length;
+  const skills = aggregateSkills(entries);
+  const byCat = CATEGORIES.map(c=>({c, n:entries.filter(e=>e.category===c).length})).filter(x=>x.n>0).sort((a,b)=>b.n-a.n);
+  const maxCat = Math.max(1, ...byCat.map(x=>x.n));
+  const hour = now.getHours();
+  const greet = hour<12?'Good morning':hour<18?'Good afternoon':'Good evening';
+  const nudges = [
+    'Did you unblock a teammate or mentor anyone this week?',
+    'Ship or fix anything? Even a small win counts.',
+    'Learn a new tool, command, or concept lately?',
+    'Any number you can attach to recent work — %, $, users?',
+  ];
+  return (
+    <div className="page-body">
+      <header className="dash-hd">
+        <Eyebrow>{recDate()} · {entries.length} records</Eyebrow>
+        <h1 className="font-display h-xl">{profile.name ? `${greet}, ${profile.name.split(' ')[0]}.` : `${greet}.`}</h1>
+        <p className="lede">Capture it now while it's fresh. Future-you, mid-application, will thank you.</p>
+      </header>
+
+      {!profile.name && (
+        <div className="card pad" style={{marginBottom:'1.5rem',background:'linear-gradient(155deg,var(--accent-soft),#fff)',borderColor:'#d9d5f8'}}>
+          <Eyebrow><Icon name="user" size={12}/> Get started</Eyebrow>
+          <h3 className="font-display" style={{margin:'.5rem 0 .4rem',fontSize:'1.15rem'}}>Set up your profile</h3>
+          <p style={{margin:'0 0 .9rem',fontSize:'.88rem',color:'var(--ink-soft)'}}>Add your name, headline, and contact info — it takes 30 seconds and populates every résumé you build.</p>
+          <Btn size="sm" onClick={()=>setView('profile')}><Icon name="user" size={14}/>Complete profile</Btn>
+        </div>
+      )}
+
+      <Composer big />
+
+      <div className="stat-strip">
+        {[['Total records', entries.length],['This month', thisMonth],['Skills tracked', skills.length],['Public wins', entries.filter(e=>e.visibility==='public').length]].map(([l,v])=>(
+          <div key={l} className="stat">
+            <div className="stat-v font-display">{v}</div>
+            <div className="stat-l mono">{l}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="dash-grid">
+        <section className="card pad">
+          <div className="sec-hd"><Eyebrow><Icon name="layers" size={12}/> The record</Eyebrow><button className="link-btn" onClick={()=>setView('journal')}>Open journal <Icon name="chevright" size={14}/></button></div>
+          {recent.length===0 ? <Empty label="Nothing logged yet. Your first win goes above." /> :
+            <div className="mini-stack">
+              {recent.slice(0,4).map((e,i)=>(
+                <div key={e.id} className="mini-rec">
+                  <span className="mini-no mono">№{String(recent.length-i).padStart(3,'0')}</span>
+                  <span className={`mini-ic ${catCls(e.category)}`}><Icon name={catIcon(e.category)} size={13}/></span>
+                  <div className="mini-text"><div className="mini-title">{e.title}</div><div className="mini-sub mono">{recDate(e.date)} · {e.category}</div></div>
+                </div>
+              ))}
+            </div>}
+        </section>
+
+        <section className="card pad">
+          <div className="sec-hd"><Eyebrow><Icon name="trending" size={12}/> Top skills</Eyebrow></div>
+          {skills.length===0? <Empty label="Skills surface here as you log." /> :
+            <div className="bars">
+              {skills.slice(0,6).map(s=>(
+                <div key={s.name} className="bar-row">
+                  <span className="bar-label">{s.name}</span>
+                  <div className="bar-track"><div className="bar-fill" style={{ width:`${(s.count/skills[0].count)*100}%` }} /></div>
+                  <span className="bar-n mono">{s.count}</span>
+                </div>
+              ))}
+            </div>}
+          {byCat.length>0 && <div className="cat-mini">{byCat.map(x=>(
+            <div key={x.c} className="catbar">
+              <span className={`catbar-ic ${catCls(x.c)}`}><Icon name={catIcon(x.c)} size={11}/></span>
+              <span className="catbar-name">{x.c}</span>
+              <div className="catbar-track"><div className="catbar-fill" style={{width:`${x.n/maxCat*100}%`}}/></div>
+            </div>
+          ))}</div>}
+        </section>
+
+<section className="card pad cta-card">
+          <Eyebrow><Icon name="file" size={12}/> When you're ready</Eyebrow>
+          <h3 className="font-display cta-h">Turn the record into a résumé.</h3>
+          <p className="cta-p">Tell Tally what you're applying for. It pulls the relevant wins, tailors the wording, and drops them into a template — no blank page.</p>
+          <Btn onClick={()=>setView('resume')}><Icon name="wand" size={15}/>Open Résumé Studio</Btn>
+        </section>
+      </div>
+    </div>
+  );
+}
+
+/* ============================== journal ============================== */
+function JournalView(){
+  const { entries } = useApp();
+  const [q,setQ] = useState('');
+  const [cat,setCat] = useState('All');
+  const ordered = [...entries].sort((a,b)=>b.createdAt-a.createdAt);
+  const filtered = ordered.filter(e => {
+    const okCat = cat==='All' || e.category===cat;
+    const okQ = !q || `${e.title} ${e.summary} ${(e.skills||[]).join(' ')} ${e.organization||''}`.toLowerCase().includes(q.toLowerCase());
+    return okCat && okQ;
+  });
+  return (
+    <div className="page-body">
+      <header className="dash-hd">
+        <Eyebrow><Icon name="book" size={12}/> The record · {entries.length} entries</Eyebrow>
+        <h1 className="font-display h-xl">Journal</h1>
+        <p className="lede">Every accomplishment, dated and numbered. Log the small ones too — they add up to the story.</p>
+      </header>
+      <Composer />
+      <div className="filter-bar">
+        <div className="search">
+          <Icon name="search" size={15}/>
+          <input value={q} onChange={e=>setQ(e.target.value)} placeholder="Search records, skills, orgs…" />
+          {q && <button className="ic-btn" onClick={()=>setQ('')}><Icon name="x" size={14}/></button>}
+        </div>
+        <div className="cat-tabs">
+          {['All',...CATEGORIES].map(c => {
+            const n = c==='All'? entries.length : entries.filter(e=>e.category===c).length;
+            if(c!=='All' && n===0) return null;
+            return <button key={c} className={`cat-tab ${cat===c?'cat-tab-on':''}`} onClick={()=>setCat(c)}>{c}<span className="cat-tab-n">{n}</span></button>;
+          })}
+        </div>
+      </div>
+      {filtered.length===0 ? <Empty label={q||cat!=='All'?'No records match that filter.':'Your journal is empty — log your first win above.'} /> :
+        <div className="rec-list">
+          {filtered.map((e)=> <EntryCard key={e.id} e={e} index={ordered.length - ordered.indexOf(e)} />)}
+        </div>}
+    </div>
+  );
+}
+
+/* ============================== profile ============================== */
+function ProfileView(){
+  const { profile, setProfile, entries, settings, setSettings, notify, setAiOn } = useApp();
+  const [li,setLi] = useState(false);
+  const [genBusy,setGenBusy] = useState(false);
+  const [editP,setEditP] = useState(!profile.name);
+  const skills = aggregateSkills(entries);
+  const roles = currentRoles(entries);
+  const publicWins = entries.filter(e=>e.visibility==='public').sort((a,b)=>b.createdAt-a.createdAt);
+  const genSummary = async () => {
+    setGenBusy(true);
+    try{
+      const sys = `Write a crisp 2-3 sentence professional summary for someone's profile, based only on the records given. No fluff, no fabrication. Return plain text only.`;
+      const u = `Headline: ${profile.headline}\nRecords:\n${entries.map(e=>`- ${e.title} (${e.category}; skills: ${(e.skills||[]).join(', ')})`).join('\n')}`;
+      const out = await callAI({ system:sys, user:u });
+      setProfile(p=>({...p, summary: out.trim()})); setAiOn(true); notify('Summary written');
+    }catch(e){
+      setProfile(p=>({...p, summary:`${profile.headline} with hands-on experience across ${skills.slice(0,3).map(s=>s.name).join(', ')}. Known for turning ideas into shipped, measurable work — from ${entries[0]?entries[0].title.toLowerCase():'projects'} to ${entries[1]?entries[1].title.toLowerCase():'team wins'}.`}));
+      setAiOn(false); notify('Summary drafted (quick mode)');
+    }
+    setGenBusy(false);
+  };
+  return (
+    <div className="page-body">
+      <div className="profile-hero card">
+        <div className="ph-cover" />
+        <div className="ph-main">
+          <Avatar initials={profile.avatar||'·'} size={84} accent="var(--accent)" />
+          <div className="ph-info">
+            <div style={{display:'flex',alignItems:'center',gap:'.6rem',flexWrap:'wrap'}}>
+              <h1 className="font-display h-xl" style={{margin:0}}>{profile.name||'Your Name'}</h1>
+              {profile.accountType && <span className="chip chip-accent" style={{fontSize:'.68rem'}}><Icon name={ACCOUNT_TYPES.find(t=>t.value===profile.accountType)?.icon||'user'} size={11}/>{accountTypeLabel(profile.accountType)}</span>}
+            </div>
+            <p className="ph-head">{profile.headline}</p>
+            <div className="ph-meta mono">
+              {profile.location && <span><Icon name="pin" size={12}/>{profile.location}</span>}
+              {profile.email && <span><Icon name="mail" size={12}/>{profile.email}</span>}
+              {profile.linkedin
+                ? <a className="li-link" href={profile.linkedin} target="_blank" rel="noreferrer"><Icon name="linkedin" size={12}/>LinkedIn connected</a>
+                : <button className="li-link" onClick={()=>setLi(true)}><Icon name="link" size={12}/>Connect LinkedIn</button>}
+            </div>
+          </div>
+          <div className="ph-actions">
+            <Btn variant="ghost" size="sm" onClick={()=>setEditP(true)}><Icon name="pencil" size={13}/>Edit profile</Btn>
+          </div>
+        </div>
+      </div>
+
+      <div className="profile-grid">
+        <div className="profile-col">
+          <section className="card pad">
+            <div className="sec-hd"><Eyebrow><Icon name="quote" size={12}/> Summary</Eyebrow>
+              <Btn variant="quiet" size="sm" onClick={genSummary} disabled={genBusy}>{genBusy?<Spinner size={13}/>:<Icon name="wand" size={13}/>}{profile.summary?'Rewrite':'Write with AI'}</Btn>
+            </div>
+            {profile.summary? <p className="prof-summary">{profile.summary}</p> : <Empty label="Let Tally draft a summary from your records." />}
+          </section>
+
+          <section className="card pad">
+            <div className="sec-hd"><Eyebrow><Icon name="briefcase" size={12}/> Positions</Eyebrow><span className="dim mono sm">from records & LinkedIn</span></div>
+            {(() => {
+              const liPos = (profile.linkedin_positions||[]).filter(p=>p.title||p.company);
+              const recRoles = roles;
+              if(!liPos.length && !recRoles.length) return <Empty label="Mark a record as a current role (edit → toggle) and it shows here." />;
+              return <div className="role-list">
+                {recRoles.map(r=>(
+                  <div key={r.id} className="role"><span className="role-dot"/><div><div className="role-title">{r.role}</div>{r.org && <div className="role-org mono">{r.org}</div>}</div></div>
+                ))}
+                {liPos.map((p,i)=>(
+                  <div key={'li-'+i} className="role">
+                    <span className="role-dot" style={{background:'var(--ink-faint)',boxShadow:'0 0 0 3px var(--paper-2)'}}/>
+                    <div>
+                      <div className="role-title">{p.title}{p.current && <span className="now-tag" style={{marginLeft:'.4rem'}}>NOW</span>}</div>
+                      <div className="role-org mono">{p.company}{p.startDate&&` · ${p.startDate}${p.endDate?' – '+p.endDate:p.current?' – Present':''}`}</div>
+                      {p.description && <div className="dim" style={{fontSize:'.76rem',marginTop:'.2rem',lineHeight:1.4}}>{p.description.slice(0,140)}{p.description.length>140?'…':''}</div>}
+                    </div>
+                  </div>
+                ))}
+              </div>;
+            })()}
+          </section>
+
+          {(profile.linkedin_education||[]).length>0 && (
+            <section className="card pad">
+              <div className="sec-hd"><Eyebrow><Icon name="grad" size={12}/> Education</Eyebrow><span className="dim mono sm">from LinkedIn</span></div>
+              <div className="role-list">
+                {(profile.linkedin_education||[]).map((e,i)=>(
+                  <div key={i} className="role">
+                    <span className="role-dot" style={{background:'var(--accent)',boxShadow:'0 0 0 3px var(--accent-soft)'}}/>
+                    <div>
+                      <div className="role-title">{e.degree}{e.field?' in '+e.field:''}</div>
+                      <div className="role-org mono">{e.school}{(e.startYear||e.endYear)?` · ${e.startYear||''}${e.endYear?' – '+e.endYear:''}`:''}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          <section className="card pad">
+            <div className="sec-hd"><Eyebrow><Icon name="globe" size={12}/> Public record</Eyebrow><span className="dim mono sm">{publicWins.length} shared</span></div>
+            {publicWins.length? <div className="pub-feed">{publicWins.slice(0,5).map(e=>(
+              <div key={e.id} className="pub-item"><span className={`pub-ic ${catCls(e.category)}`}><Icon name={catIcon(e.category)} size={13}/></span><div className="mini-text"><div className="pub-title">{e.title}</div><div className="pub-sub mono">{recDate(e.date)} · {e.category}</div></div></div>
+            ))}</div> : <Empty label="Toggle a record to Public to build your shareable feed." />}
+          </section>
+        </div>
+
+        <div className="profile-col">
+          <section className="card pad">
+            <div className="sec-hd"><Eyebrow><Icon name="trending" size={12}/> Skill graph</Eyebrow></div>
+            {skills.length? <div className="skill-cloud">{skills.map(s=>(
+              <span key={s.name} className="skill-tag" style={{ fontSize:`${0.74 + Math.min(0.5,(s.count-1)*0.12)}rem`, opacity: 0.62 + Math.min(0.38,(s.count-1)*0.1) }}>{s.name}<span className="skill-ct">{s.count}</span></span>
+            ))}</div> : <Empty label="Skills aggregate from your records." />}
+          </section>
+
+          <section className="card pad linkedin-card">
+            <Eyebrow><Icon name="linkedin" size={12}/> LinkedIn</Eyebrow>
+            <p className="li-blurb">Link your profile so it rides along on every résumé, and import your existing experience as records in one paste.</p>
+            <Btn variant={profile.linkedin?'ghost':'primary'} size="sm" onClick={()=>setLi(true)}><Icon name="link" size={14}/>{profile.linkedin?'Manage / re-import':'Connect & import'}</Btn>
+          </section>
+
+          <section className="card pad">
+            <div className="sec-hd"><Eyebrow><Icon name="eye" size={12}/> Visibility</Eyebrow></div>
+            <label className="switch big-switch"><input type="checkbox" checked={settings.publicProfile} onChange={e=>setSettings(s=>({...s, publicProfile:e.target.checked}))}/><span>Show my public profile in the community</span></label>
+            <p className="dim sm-note">Only records you mark Public are ever shared. Everything else stays private to you.</p>
+          </section>
+        </div>
+      </div>
+
+      {li && <LinkedInModal onClose={()=>setLi(false)} />}
+      {editP && <ProfileEditor onClose={()=>setEditP(false)} />}
+    </div>
+  );
+}
+
+function ProfileEditor({ onClose }){
+  const { profile, setProfile } = useApp();
+  const [f,setF] = useState({...profile});
+  const set=(k,v)=>setF(p=>({...p,[k]:v}));
+  const save=()=>{ const initials=(f.name||'').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()||'·'; setProfile({...f, avatar:initials}); onClose(); };
+  return (
+    <Modal open onClose={onClose} wide>
+      <Eyebrow><Icon name="user" size={12}/> Edit profile</Eyebrow>
+
+      <label className="lbl" style={{marginBottom:'.5rem'}}>Account type</label>
+      <div style={{display:'flex',flexDirection:'column',gap:'.4rem',marginBottom:'.9rem'}}>
+        {ACCOUNT_TYPES.map(t=>(
+          <button key={t.value} onClick={()=>set('accountType',t.value)}
+            style={{display:'flex',alignItems:'center',gap:'.7rem',padding:'.6rem .8rem',borderRadius:'10px',border:`1.5px solid ${f.accountType===t.value?'var(--accent)':'var(--line)'}`,background:f.accountType===t.value?'var(--accent-soft)':'var(--surface)',cursor:'pointer',textAlign:'left',transition:'.15s'}}>
+            <Icon name={t.icon} size={16} style={{stroke:f.accountType===t.value?'var(--accent-2)':'var(--ink-faint)',flexShrink:0}}/>
+            <div>
+              <div style={{fontWeight:600,fontSize:'.88rem',color:f.accountType===t.value?'var(--accent-2)':'var(--ink)'}}>{t.label}</div>
+              <div style={{fontSize:'.72rem',color:'var(--ink-faint)'}}>{t.desc}</div>
+            </div>
+            {f.accountType===t.value && <Icon name="check" size={15} style={{stroke:'var(--accent)',marginLeft:'auto',flexShrink:0}}/>}
+          </button>
+        ))}
+      </div>
+
+      <div className="grid-2">
+        <label className="lbl">Name<input className="field" value={f.name||''} onChange={e=>set('name',e.target.value)}/></label>
+        <label className="lbl">Headline<input className="field" value={f.headline||''} onChange={e=>set('headline',e.target.value)} placeholder="e.g. Product Designer"/></label>
+        <label className="lbl">Email<input className="field" value={f.email||''} onChange={e=>set('email',e.target.value)}/></label>
+        <label className="lbl">Phone<input className="field" value={f.phone||''} onChange={e=>set('phone',e.target.value)}/></label>
+        <label className="lbl">Location<input className="field" value={f.location||''} onChange={e=>set('location',e.target.value)}/></label>
+        <label className="lbl">LinkedIn URL<input className="field" value={f.linkedin||''} onChange={e=>set('linkedin',e.target.value)} placeholder="linkedin.com/in/…"/></label>
+      </div>
+      <div className="modal-foot"><Btn variant="ghost" onClick={onClose}>Cancel</Btn><Btn onClick={save}><Icon name="check" size={15}/>Save</Btn></div>
+    </Modal>
+  );
+}
+
+function LinkedInModal({ onClose }){
+  const { profile, setProfile, addEntries, notify, setAiOn } = useApp();
+  const [url,setUrl] = useState(profile.linkedin||'');
+  const [paste,setPaste] = useState('');
+  const [busy,setBusy] = useState(false);
+  const [tab,setTab] = useState('experience');
+
+  const importText = async () => {
+    if(!paste.trim()){ setProfile(p=>({...p, linkedin:url})); notify('LinkedIn linked'); onClose(); return; }
+    setBusy(true);
+    let made = [];
+    try{
+      const sys = `You are parsing pasted LinkedIn profile content. Extract ALL structured data and return ONLY valid JSON with this schema:
+{
+  "headline": string or null,
+  "name": string or null,
+  "location": string or null,
+  "about": string or null,
+  "positions": [{"title","company","startDate","endDate","current":bool,"description","skills":[]}],
+  "education": [{"school","degree","field","startYear","endYear","description"}],
+  "posts": [{"text","date":null}],
+  "certifications": [{"name","issuer","date"}],
+  "volunteer": [{"role","organization","description"}],
+  "skills": [],
+  "records": [{"title","category":"Work|Project|Award|Learning|Volunteer|Leadership|Milestone|Other","organization","role","skills":[],"metrics":[],"summary","current":bool,"date":null}]
+}
+Extract every position as both a position AND a record. Extract posts as records with category Other or appropriate. Do not invent facts. Include rich detail in descriptions.`;
+      const out = await callAI({ system:sys, user:paste });
+      const j = parseJSON(out);
+      if(j){
+        const profilePatch = {};
+        if(j.headline) profilePatch.headline = profile.headline || j.headline;
+        if(j.name && !profile.name) profilePatch.name = j.name;
+        if(j.location && !profile.location) profilePatch.location = j.location;
+        if(j.about && !profile.summary) profilePatch.summary = j.about;
+        if(url) profilePatch.linkedin = url;
+
+        const positions = (j.positions||[]).map(p=>({
+          id:uid(), createdAt:Date.now(),
+          date: p.startDate || new Date().toISOString().slice(0,10),
+          title: p.title || 'Position',
+          category:'Work', organization:p.company||'', role:p.title||'',
+          current:!!p.current, skills:p.skills||[],
+          metrics:[], summary:p.description||p.title||'',
+          tags:['linkedin-import'], visibility:'private',
+        }));
+        const edu = (j.education||[]).map(e=>({
+          id:uid(), createdAt:Date.now(),
+          date: (e.endYear||e.startYear) ? `${e.endYear||e.startYear}-01-01` : new Date().toISOString().slice(0,10),
+          title: [e.degree, e.field].filter(Boolean).join(' in ') || e.school || 'Education',
+          category:'Learning', organization:e.school||'', role:'',
+          current:false, skills:[], metrics:[],
+          summary:e.description || [e.degree, e.field, e.school].filter(Boolean).join(', '),
+          tags:['linkedin-import'], visibility:'private',
+        }));
+        const posts = (j.posts||[]).map(p=>({
+          id:uid(), createdAt:Date.now(),
+          date: p.date || new Date().toISOString().slice(0,10),
+          title: (p.text||'').slice(0,70) || 'LinkedIn post',
+          category: detectCategory(p.text||''),
+          organization:'', role:'', current:false,
+          skills:extractSkills(p.text||''), metrics:extractMetrics(p.text||''),
+          summary:p.text||'', tags:['linkedin-post'], visibility:'private',
+        }));
+        const certs = (j.certifications||[]).map(c=>({
+          id:uid(), createdAt:Date.now(),
+          date: c.date || new Date().toISOString().slice(0,10),
+          title: c.name || 'Certification',
+          category:'Learning', organization:c.issuer||'', role:'',
+          current:false, skills:[], metrics:[],
+          summary:`${c.name}${c.issuer?' — issued by '+c.issuer:''}`,
+          tags:['linkedin-import'], visibility:'private',
+        }));
+        const vol = (j.volunteer||[]).map(v=>({
+          id:uid(), createdAt:Date.now(),
+          date: new Date().toISOString().slice(0,10),
+          title: v.role || 'Volunteer',
+          category:'Volunteer', organization:v.organization||'', role:v.role||'',
+          current:false, skills:[], metrics:[],
+          summary:v.description||v.role||'', tags:['linkedin-import'], visibility:'private',
+        }));
+        const extra = (j.records||[]).map(r=>({
+          id:uid(), createdAt:Date.now(),
+          date: r.date || new Date().toISOString().slice(0,10),
+          title:r.title||'Imported record', category:r.category||'Work',
+          organization:r.organization||'', role:r.role||'', current:!!r.current,
+          skills:r.skills||[], metrics:r.metrics||[], summary:r.summary||r.title||'',
+          tags:['linkedin-import'], visibility:'private',
+        }));
+
+        made = [...positions, ...edu, ...certs, ...vol, ...posts, ...extra];
+        const seen = new Set(); made = made.filter(e=>{ const k=e.title+e.organization; if(seen.has(k)) return false; seen.add(k); return true; });
+
+        setProfile(p=>({...p, ...profilePatch,
+          avatar:(profilePatch.name||p.name||'').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()||'·',
+          linkedin_positions: (j.positions||[]),
+          linkedin_education: (j.education||[]),
+          linkedin_skills: (j.skills||[]),
+        }));
+
+        try{
+          const { data:{ user } } = await window._sb.auth.getUser();
+          if(user){
+            await window._sb.from('profiles').upsert({
+              id: user.id,
+              email: user.email,
+              full_name: profilePatch.name || profile.name || null,
+              updated_at: new Date().toISOString(),
+            });
+          }
+        }catch(_){}
+
+        setAiOn(true);
+      } else throw new Error('parse');
+    }catch(e){
+      setAiOn(false);
+      made = paste.split(/\n{2,}/).map(b=>b.trim()).filter(Boolean).slice(0,12).map(b=>({
+        id:uid(), createdAt:Date.now(), date:new Date().toISOString().slice(0,10),
+        ...localStructure(b,'Work'), tags:['linkedin-import'], visibility:'private',
+      }));
+      setProfile(p=>({...p, linkedin:url}));
+    }
+    if(!profile.linkedin) setProfile(p=>({...p, linkedin:url}));
+    if(made.length) addEntries(made);
+    notify(`Imported ${made.length} record${made.length===1?'':'s'} from LinkedIn`);
+    setBusy(false); onClose();
+  };
+
+  return (
+    <Modal open onClose={onClose} wide>
+      <Eyebrow><Icon name="linkedin" size={12}/> LinkedIn import</Eyebrow>
+      <h2 className="font-display modal-h">Bring your full history in.</h2>
+      <label className="lbl">Profile URL <span className="dim">— shown on your résumé contact line</span>
+        <input className="field" value={url} onChange={e=>setUrl(e.target.value)} placeholder="https://linkedin.com/in/yourname"/>
+      </label>
+      <div style={{display:'flex',gap:'.4rem',margin:'.9rem 0 .4rem'}}>
+        {[['experience','Experience & Education'],['posts','Posts & Activity']].map(([t,l])=>(
+          <button key={t} className={`hint ${tab===t?'hint-on':''}`} onClick={()=>setTab(t)}>{l}</button>
+        ))}
+      </div>
+      {tab==='experience' ? (
+        <label className="lbl">
+          <span className="dim">Go to your LinkedIn profile → More → Save to PDF, then copy-paste all text here. Or paste your Experience and Education sections manually.</span>
+          <textarea className="field" rows={8} value={paste} onChange={e=>setPaste(e.target.value)}
+            placeholder={"Software Engineer · Acme Corp · Jan 2023 – Present\nLed a team of 4 to redesign the checkout flow, reducing drop-off by 18%...\n\nTeaching Assistant · State University · 2022\nSupported 60 students in intro CS...\n\nB.S. Computer Science · State University · 2022"}/>
+        </label>
+      ) : (
+        <label className="lbl">
+          <span className="dim">Paste your LinkedIn posts or activity text below — Tally will classify and log each one as a record.</span>
+          <textarea className="field" rows={8} value={paste} onChange={e=>setPaste(e.target.value)}
+            placeholder={"Excited to share that our team just shipped v2.0...\n\n---\n\nReflecting on my first year as a TA — taught 60 students..."}/>
+        </label>
+      )}
+      <p className="dim" style={{fontSize:'.76rem',margin:'.4rem 0 0',lineHeight:1.4}}>Tally reads this text with AI — positions become Work records, education becomes Learning records, posts become activity records. Nothing is sent to LinkedIn.</p>
+      <div className="modal-foot">
+        <Btn variant="ghost" onClick={onClose}>Cancel</Btn>
+        <Btn onClick={importText} disabled={busy}>{busy?<Spinner/>:<Icon name="upload" size={15}/>}{busy?'Reading & importing…':(paste.trim()?'Import from LinkedIn':'Link account')}</Btn>
+      </div>
+    </Modal>
+  );
+}
+
+/* ============================== community ============================== */
+function PostComposer(){
+  const { profile, entries, community, setCommunity, notify } = useApp();
+  const [text,setText] = useState('');
+  const [vis,setVis] = useState('public');
+  const [media,setMedia] = useState(null);
+  const [busy,setBusy] = useState(false);
+  const [picker,setPicker] = useState(false);
+  const fileRef = useRef(null);
+
+  const onFile = (e) => {
+    const f = e.target.files&&e.target.files[0]; if(!f) return;
+    if(f.size > 20*1024*1024){ notify('File too large — max 20 MB'); return; }
+    const reader = new FileReader();
+    reader.onload = () => setMedia({ type:f.type.startsWith('video')?'video':'image', src:reader.result, mime:f.type, name:f.name });
+    reader.readAsDataURL(f);
+    e.target.value='';
+  };
+
+  const pickEntry = (e) => {
+    setText(t => (t?t+'\n\n':'')+`${e.title}\n${e.summary}${(e.metrics||[]).length?' — '+e.metrics.join(', '):''}`);
+    setPicker(false);
+  };
+
+  const submit = async () => {
+    if(!text.trim()&&!media) return;
+    setBusy(true);
+    const post = {
+      id:uid(), userId:null, name:profile.name||'You', headline:profile.headline||'',
+      avatar:profile.avatar||'·', accountType:profile.accountType||'',
+      content:text.trim(), visibility:vis, media:media||null,
+      category:detectCategory(text), likes:[], createdAt:Date.now(), mine:true,
+    };
+    try{
+      const {data:{user}} = await window._sb.auth.getUser();
+      if(user) post.userId = user.id;
+    }catch(_){}
+    setCommunity(c=>({...c, posts:[post,...(c.posts||[])]}));
+    setText(''); setMedia(null); setVis('public'); setBusy(false);
+    notify(vis==='public'?'Posted publicly to your feed':'Saved as a private post');
+  };
+
+  return (
+    <div className="card pad pcomposer">
+      <div style={{display:'flex',gap:'.7rem',alignItems:'flex-start'}}>
+        <Avatar initials={profile.avatar||'·'} size={38} accent="var(--accent)"/>
+        <div style={{flex:1}}>
+          <textarea rows={3} value={text} onChange={e=>setText(e.target.value)} placeholder="Share a win, an update, or a reflection…"
+            onKeyDown={e=>{if((e.metaKey||e.ctrlKey)&&e.key==='Enter') submit();}}/>
+          {media && (
+            <div className="media-preview">
+              {media.type==='image'?<img src={media.src} alt="attachment"/>:<video src={media.src} controls/>}
+              <button className="media-preview-x" onClick={()=>setMedia(null)}><Icon name="x" size={14}/></button>
+            </div>
+          )}
+          {picker && (
+            <div className="card" style={{marginTop:'.5rem',maxHeight:'220px',overflowY:'auto',padding:'.5rem 0'}}>
+              {entries.length===0 && <p className="dim" style={{padding:'.5rem 1rem',fontSize:'.82rem'}}>No journal entries yet.</p>}
+              {entries.map(e=>(
+                <button key={e.id} onClick={()=>pickEntry(e)} style={{display:'block',width:'100%',textAlign:'left',padding:'.45rem 1rem',background:'none',border:'none',cursor:'pointer',fontSize:'.85rem',borderBottom:'1px solid var(--line-2)'}}>
+                  <span style={{fontWeight:600}}>{e.title}</span><span className="dim" style={{fontSize:'.72rem',marginLeft:'.5rem'}}>{e.category}</span>
+                </button>
+              ))}
+            </div>
+          )}
+          <div className="pcomposer-tools">
+            <input ref={fileRef} type="file" accept="image/*,video/*" style={{display:'none'}} onChange={onFile}/>
+            <button className="ic-btn" title="Attach image or video" onClick={()=>fileRef.current&&fileRef.current.click()}><Icon name="upload" size={16}/></button>
+            <button className="ic-btn" title="Insert from journal" onClick={()=>setPicker(p=>!p)}><Icon name="book" size={16}/></button>
+            <button className={`vis-toggle ${vis==='public'?'pub':''}`} onClick={()=>setVis(v=>v==='public'?'private':'public')}>
+              <Icon name={vis==='public'?'globe':'lock'} size={13}/>
+              {vis==='public'?'Public':'Private'}
+            </button>
+            <Btn size="sm" style={{marginLeft:'auto'}} onClick={submit} disabled={busy||(!text.trim()&&!media)}>
+              {busy?<Spinner size={13}/>:<Icon name="send" size={14}/>}{busy?'Posting…':'Post'}
+            </Btn>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ConnectionsPanel(){
+  const { community, setCommunity, notify } = useApp();
+  const [email,setEmail] = useState('');
+  const [busy,setBusy] = useState(false);
+  const conns = community.connections||[];
+
+  const addConnection = async () => {
+    const val = email.trim(); if(!val) return;
+    if(conns.find(c=>c.email===val)){ notify('Already connected'); return; }
+    setBusy(true);
+    let person = { id:uid(), email:val, name:val, headline:'Tally user', avatar:val.slice(0,2).toUpperCase() };
+    try{
+      const {data} = await window._sb.from('profiles').select('id,full_name,email').eq('email',val).maybeSingle();
+      if(data) person = {...person, id:data.id, name:data.full_name||val, avatar:(data.full_name||val).split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()||'??' };
+    }catch(_){}
+    setCommunity(c=>({...c, connections:[...(c.connections||[]),person]}));
+    setEmail(''); setBusy(false);
+    notify(`Added ${person.name}`);
+  };
+
+  const remove = (id) => setCommunity(c=>({...c, connections:(c.connections||[]).filter(x=>x.id!==id)}));
+
+  return (
+    <div style={{display:'flex',flexDirection:'column',gap:'1rem'}}>
+      <section className="card pad">
+        <Eyebrow><Icon name="users" size={12}/> People</Eyebrow>
+        <p className="dim sm-note" style={{margin:'.5rem 0 .8rem'}}>Add someone by their Tally account email to see their public posts in your feed.</p>
+        <div style={{display:'flex',gap:'.4rem'}}>
+          <input className="field" value={email} onChange={e=>setEmail(e.target.value)} placeholder="their@email.com"
+            onKeyDown={e=>{if(e.key==='Enter')addConnection();}} style={{flex:1}}/>
+          <Btn size="sm" onClick={addConnection} disabled={busy||!email.trim()}>{busy?<Spinner size={13}/>:<Icon name="plus" size={14}/>}</Btn>
+        </div>
+        {conns.length>0 && (
+          <div className="conn-list">
+            {conns.map(c=>(
+              <div key={c.id} className="conn-item">
+                <Avatar initials={c.avatar||'??'} size={32} accent="var(--ink)"/>
+                <div className="conn-info"><div className="conn-name">{c.name}</div><div className="conn-sub mono">{c.email}</div></div>
+                <button className="ic-btn" onClick={()=>remove(c.id)} title="Remove"><Icon name="x" size={13}/></button>
+              </div>
+            ))}
+          </div>
+        )}
+        {conns.length===0 && <p className="dim" style={{fontSize:'.8rem',marginTop:'.7rem'}}>No connections yet.</p>}
+      </section>
+    </div>
+  );
+}
+
+function FeedPost({ post }){
+  const { community, setCommunity, profile, notify } = useApp();
+  const [openCmt,setOpenCmt] = useState(false);
+  const [draft,setDraft] = useState('');
+  const liked = new Set(community.likes||[]);
+  const isLiked = liked.has(post.id);
+  const likeCount = (post.likes||[]).length + (isLiked?1:0);
+  const comments = community.comments&&community.comments[post.id]||[];
+
+  const toggleLike = () => setCommunity(c=>{ const s=new Set(c.likes||[]); s.has(post.id)?s.delete(post.id):s.add(post.id); return {...c,likes:[...s]}; });
+  const addComment = () => { if(!draft.trim()) return; setCommunity(c=>({...c,comments:{...(c.comments||{}), [post.id]:[...((c.comments||{})[post.id]||[]),{who:profile.name||'You',text:draft.trim()}]}})); setDraft(''); };
+  const deletePost = () => { setCommunity(c=>({...c,posts:(c.posts||[]).filter(p=>p.id!==post.id)})); notify('Post deleted'); };
+
+  return (
+    <article className="post card">
+      <div className="post-hd">
+        <Avatar initials={post.avatar||'·'} size={42} accent={post.mine?'var(--accent)':'var(--ink)'}/>
+        <div className="post-who">
+          <div className="post-name">
+            {post.name||'Unknown'}{post.mine&&<span className="you-tag">you</span>}
+            {post.accountType && <span className="chip" style={{fontSize:'.58rem',padding:'.1rem .35rem'}}>{accountTypeLabel(post.accountType)}</span>}
+          </div>
+          <div className="post-sub mono">{post.headline} · {recDate(post.createdAt)}</div>
+        </div>
+        {post.category && <CatBadge cat={post.category}/>}
+        <span className={`post-vis`}><Icon name={post.visibility==='public'?'globe':'lock'} size={11}/>{post.visibility}</span>
+        {post.mine && <button className="ic-btn" onClick={deletePost} title="Delete post"><Icon name="trash" size={13}/></button>}
+      </div>
+      {post.content && <p className="post-text">{post.content}</p>}
+      {post.media && (
+        <div className="post-media">
+          {post.media.type==='image'?<img src={post.media.src} alt=""/>:<video src={post.media.src} controls/>}
+        </div>
+      )}
+      <div className="post-foot">
+        <button className={`react ${isLiked?'react-on':''}`} onClick={toggleLike}><Icon name="heart" size={15} fill={isLiked?'currentColor':'none'}/>{likeCount||0}</button>
+        <button className="react" onClick={()=>setOpenCmt(v=>!v)}><Icon name="message" size={15}/>{comments.length}</button>
+      </div>
+      {openCmt && (
+        <div className="comments">
+          {comments.map((c,i)=><div key={i} className="cmt"><b>{c.who}</b> {c.text}</div>)}
+          <div className="cmt-add">
+            <input className="field" value={draft} onChange={e=>setDraft(e.target.value)} placeholder="Add a comment…" onKeyDown={e=>{if(e.key==='Enter')addComment();}}/>
+            <Btn size="sm" onClick={addComment}><Icon name="send" size={14}/></Btn>
+          </div>
+        </div>
+      )}
+    </article>
+  );
+}
+
+function CommunityView(){
+  const { community } = useApp();
+  const posts = (community.posts||[]).slice().sort((a,b)=>b.createdAt-a.createdAt);
+  return (
+    <div className="page-body">
+      <header className="dash-hd">
+        <Eyebrow><Icon name="users" size={12}/> Community</Eyebrow>
+        <h1 className="font-display h-xl">Your feed</h1>
+        <p className="lede">Post wins publicly or keep them private. Add people to see their public updates alongside yours.</p>
+      </header>
+      <div className="community-layout">
+        <div>
+          <PostComposer/>
+          {posts.length===0
+            ? <div className="empty card pad"><div className="empty-mark"><Icon name="users" size={18}/></div><p>Nothing posted yet. Share your first win above — publicly or just for yourself.</p></div>
+            : <div className="feed">{posts.map(p=><FeedPost key={p.id} post={p}/>)}</div>
+          }
+        </div>
+        <div style={{position:'sticky',top:'1rem'}}><ConnectionsPanel/></div>
+      </div>
+    </div>
+  );
+}
+
+/* ============================== résumé download ============================== */
+function buildResumeHTML(r, esc){
+  let h = `<h1>${esc(r.name||'')}</h1>`;
+  if(r.headline) h += `<div class="sub">${esc(r.headline)}</div>`;
+  const c=[r.contact&&r.contact.email,r.contact&&r.contact.phone,r.contact&&r.contact.location,...((r.contact&&r.contact.links)||[])].filter(Boolean).map(esc).join(' &nbsp;&bull;&nbsp; ');
+  if(c) h += `<div class="c">${c}</div>`;
+  if(r.summary) h += `<h2>Summary</h2><div>${esc(r.summary)}</div>`;
+  if(r.experience&&r.experience.length){ h+=`<h2>Experience</h2>`; r.experience.forEach(e=>{ h+=`<div class="it"><span class="d">${esc([e.start,e.end].filter(Boolean).join(' – '))}</span><span class="r">${esc(e.role||'')}</span>${e.organization?` <span class="o">— ${esc(e.organization)}</span>`:''}<ul>${(e.bullets||[]).map(b=>`<li>${esc(b)}</li>`).join('')}</ul></div>`; }); }
+  if(r.projects&&r.projects.length){ h+=`<h2>Projects</h2>`; r.projects.forEach(p=>{ h+=`<div class="it"><span class="r">${esc(p.name||'')}</span>${p.description?` <span class="o">— ${esc(p.description)}</span>`:''}<ul>${(p.bullets||[]).map(b=>`<li>${esc(b)}</li>`).join('')}</ul></div>`; }); }
+  if(r.skills&&r.skills.length) h+=`<h2>Skills</h2><div>${r.skills.map(s=>`<span class="sk">${esc(s)}</span>`).join('')}</div>`;
+  if(r.education&&r.education.length){ h+=`<h2>Education</h2>`; r.education.forEach(e=>{ h+=`<div class="it"><span class="d">${esc(e.year||'')}</span><span class="r">${esc(e.credential||'')}</span>${e.institution?` <span class="o">— ${esc(e.institution)}</span>`:''}</div>`; }); }
+  if(r.certifications&&r.certifications.length) h+=`<h2>Certifications</h2><div>${r.certifications.map(esc).join(' &bull; ')}</div>`;
+  if(r.awards&&r.awards.length) h+=`<h2>Awards</h2><div>${r.awards.map(esc).join(' &bull; ')}</div>`;
+  return h;
+}
+function downloadResume(r){
+  const safe=(r.name||'resume').replace(/[^a-z0-9]+/gi,'_').toLowerCase();
+  const esc=(s)=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const doc=`<!doctype html><html><head><meta charset="utf-8"><title>${esc(r.name||'Resume')}</title><style>body{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;max-width:760px;margin:40px auto;padding:0 26px;color:#1c1c1f;line-height:1.5}h1{margin:0;font-size:28px;letter-spacing:-.5px}.sub{color:#555;font-size:15px;margin-top:2px}.c{color:#555;font-size:13px;margin:8px 0 20px}h2{font-size:12px;letter-spacing:.13em;text-transform:uppercase;border-bottom:1px solid #ddd;padding-bottom:4px;margin:22px 0 10px;color:#222}.it{margin-bottom:13px;overflow:hidden}.r{font-weight:700}.o{color:#555}.d{float:right;color:#777;font-size:12px}ul{margin:6px 0;padding-left:18px}li{margin:3px 0}.sk{display:inline-block;background:#f1f1f4;border:1px solid #e7e7ec;padding:2px 9px;border-radius:5px;margin:2px;font-size:13px}@media print{body{margin:0}}</style></head><body>${buildResumeHTML(r,esc)}</body></html>`;
+  try{
+    const blob=new Blob([doc],{type:'text/html'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url; a.download=`${safe}_resume.html`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1500);
+  }catch(e){ if(navigator.clipboard) navigator.clipboard.writeText(resumeToText(r)); }
+}
+
+/* ============================== template thumbnail ============================== */
+function TemplateThumb({ name, cfg }){
+  const a=cfg.accent;
+  if(cfg.cols===2){
+    return (
+      <div className="thumb">
+        <div className="thumb-name" style={{fontFamily:cfg.fam,color:a}}>{name.slice(0,2)}</div>
+        <div className="thumb-cols">
+          <div className="thumb-side">{[0,1,2,3].map(i=><div key={i} className="tl w90"/>)}</div>
+          <div className="thumb-main"><div className="th" style={{background:a}}/>{[0,1,2].map(i=><div key={i} className="tl"/>)}<div className="th" style={{background:a,marginTop:'4px'}}/>{[0,1].map(i=><div key={i} className="tl w80"/>)}</div>
+        </div>
+      </div>
+    );
+  }
+  return (
+    <div className="thumb">
+      <div className="thumb-name" style={{fontFamily:cfg.fam,color:cfg.head==='serif'?a:'#16171D'}}>{name.slice(0,2)}</div>
+      <div className="thumb-line" style={{background:cfg.head==='hair'?a:'#16171D',width:cfg.head==='bar'?'32%':'100%',height:cfg.head==='bar'?'5px':'3px'}}/>
+      <div className="thumb-rows"><div className="th" style={{background:a}}/>{[0,1,2].map(i=><div key={i} className="tl"/>)}<div className="th" style={{background:a,marginTop:'5px'}}/>{[0,1].map(i=><div key={i} className="tl w80"/>)}<div className="tl w60"/></div>
+    </div>
+  );
+}
+
+/* ============================== résumé paper ============================== */
+function ResumePaper({ resume, template, styleHints, onChange }){
+  const cfg = (template==='Imported' && styleHints) ? {
+    cols: styleHints.columns===2?2:1,
+    accent: styleHints.accent||'#16171D',
+    fam: styleHints.font==='serif'?"'Newsreader', Georgia, serif":(styleHints.font==='mono'?"'Space Mono', monospace":"'Inter', sans-serif"),
+    head: styleHints.headerStyle||'plain', density:'normal',
+  } : (TEMPLATE_CFG[template]||TEMPLATE_CFG.Modern);
+  const r=resume;
+  const edit=(fn)=>{ const n=clone(r); fn(n); onChange(n); };
+  const pageCls = cfg.density==='roomy'?'pp-roomy':(cfg.density==='tight'?'pp-tight':'');
+
+  const Title=({children})=>{
+    if(cfg.head==='serif') return <h4 className="rs-title rs-serif" style={{fontFamily:cfg.fam}}>{children}</h4>;
+    if(cfg.head==='bar') return <h4 className="rs-title rs-bar"><span className="rs-bar-i" style={{background:cfg.accent}}/>{children}</h4>;
+    if(cfg.head==='hair') return <h4 className="rs-title rs-hair">{children}</h4>;
+    if(cfg.head==='mono') return <h4 className="rs-title rs-mono" style={{color:cfg.accent}}>{children}</h4>;
+    return <h4 className="rs-title">{children}</h4>;
+  };
+  const Contact=()=>(
+    <div className="rs-contact">
+      <Editable value={r.contact&&r.contact.email} placeholder="email" onChange={v=>edit(n=>{n.contact=n.contact||{};n.contact.email=v;})}/>
+      <Editable value={r.contact&&r.contact.phone} placeholder="phone" onChange={v=>edit(n=>{n.contact=n.contact||{};n.contact.phone=v;})}/>
+      <Editable value={r.contact&&r.contact.location} placeholder="location" onChange={v=>edit(n=>{n.contact=n.contact||{};n.contact.location=v;})}/>
+      {((r.contact&&r.contact.links)||[]).map((l,i)=><Editable key={i} value={l} onChange={v=>edit(n=>{ if(v.trim())n.contact.links[i]=v; else n.contact.links.splice(i,1); })}/>)}
+    </div>
+  );
+  const Skills=()=>(
+    <div className="rs-skills">
+      {(r.skills||[]).map((s,i)=><span key={i} className="rs-skill"><Editable value={s} onChange={v=>edit(n=>{ if(v.trim())n.skills[i]=v; else n.skills.splice(i,1); })}/></span>)}
+      <button className="rs-skill-add no-print" onClick={()=>edit(n=>{n.skills=n.skills||[];n.skills.push('New skill');})}><Icon name="plus" size={11}/></button>
+    </div>
+  );
+  const EduInner=()=> <div>{(r.education||[]).map((e,i)=>(
+    <div key={i} className="rs-edu">
+      <div className="rs-role"><Editable value={e.credential} placeholder="Credential" onChange={v=>edit(n=>{n.education[i].credential=v;})}/></div>
+      <div className="rs-edu-sub"><span style={{color:'#555',fontWeight:500}}><Editable value={e.institution} placeholder="Institution" onChange={v=>edit(n=>{n.education[i].institution=v;})}/></span><span className="rs-date"><Editable value={e.year} placeholder="Year" onChange={v=>edit(n=>{n.education[i].year=v;})}/></span></div>
+      {e.details && <p style={{margin:'.2em 0 0',color:'#555',fontSize:'.9em'}}><Editable multiline value={e.details} placeholder="Details" onChange={v=>edit(n=>{n.education[i].details=v;})}/></p>}
+    </div>
+  ))}</div>;
+  const CertsInner=()=> <div className="rs-skills">{(r.certifications||[]).map((c,i)=><span key={i} className="rs-skill"><Editable value={c} onChange={v=>edit(n=>{ if(v.trim())n.certifications[i]=v; else n.certifications.splice(i,1); })}/></span>)}</div>;
+  const Summary=()=> r.summary!==undefined ? <div className="rs-sec"><Title>Summary</Title><span className="rs-summary"><Editable multiline value={r.summary} placeholder="Professional summary" onChange={v=>edit(n=>{n.summary=v;})}/></span></div> : null;
+  const Experience=()=> (r.experience&&r.experience.length)? <div className="rs-sec"><Title>Experience</Title>{r.experience.map((e,i)=>(
+    <div key={i} className="rs-item">
+      <div className="rs-item-hd">
+        <div><span className="rs-role"><Editable value={e.role} placeholder="Role" onChange={v=>edit(n=>{n.experience[i].role=v;})}/></span>{e.organization&&<span className="rs-org"><Editable value={e.organization} onChange={v=>edit(n=>{n.experience[i].organization=v;})}/></span>}</div>
+        <span className="rs-date"><Editable value={[e.start,e.end].filter(Boolean).join(' – ')} placeholder="dates" onChange={v=>edit(n=>{ const p=v.split(/[–-]/); n.experience[i].start=(p[0]||'').trim(); n.experience[i].end=(p[1]||'').trim(); })}/></span>
+      </div>
+      <ul className="rs-bullets">
+        {(e.bullets||[]).map((b,j)=>(<li key={j}><Editable multiline value={b} onChange={v=>edit(n=>{ if(v.trim())n.experience[i].bullets[j]=v; else n.experience[i].bullets.splice(j,1); })}/><button className="bl-x no-print" onClick={()=>edit(n=>{n.experience[i].bullets.splice(j,1);})}><Icon name="x" size={10}/></button></li>))}
+        <li className="add-bullet no-print"><button onClick={()=>edit(n=>{n.experience[i].bullets=n.experience[i].bullets||[];n.experience[i].bullets.push('New achievement');})}><Icon name="plus" size={11}/>bullet</button></li>
+      </ul>
+    </div>
+  ))}</div> : null;
+  const Projects=()=> (r.projects&&r.projects.length)? <div className="rs-sec"><Title>Projects</Title>{r.projects.map((p,i)=>(
+    <div key={i} className="rs-item">
+      <div className="rs-item-hd"><span className="rs-role"><Editable value={p.name} placeholder="Project" onChange={v=>edit(n=>{n.projects[i].name=v;})}/></span></div>
+      {p.description!==undefined && <span className="rs-pdesc"><Editable multiline value={p.description} placeholder="What it was" onChange={v=>edit(n=>{n.projects[i].description=v;})}/></span>}
+      <ul className="rs-bullets">{(p.bullets||[]).map((b,j)=>(<li key={j}><Editable multiline value={b} onChange={v=>edit(n=>{ if(v.trim())n.projects[i].bullets[j]=v; else n.projects[i].bullets.splice(j,1); })}/></li>))}</ul>
+    </div>
+  ))}</div> : null;
+  const Volunteer=()=> (r.volunteer&&r.volunteer.length)? <div className="rs-sec"><Title>Volunteer & Community</Title>{r.volunteer.map((v,i)=>(
+    <div key={i} className="rs-item">
+      <div className="rs-item-hd"><span className="rs-role"><Editable value={v.role} placeholder="Role" onChange={val=>edit(n=>{n.volunteer[i].role=val;})}/></span>{v.organization&&<span className="rs-org"><Editable value={v.organization} onChange={val=>edit(n=>{n.volunteer[i].organization=val;})}/></span>}</div>
+      <ul className="rs-bullets">{(v.bullets||[]).map((b,j)=>(<li key={j}><Editable multiline value={b} onChange={val=>edit(n=>{ if(val.trim())n.volunteer[i].bullets[j]=val; else n.volunteer[i].bullets.splice(j,1); })}/></li>))}</ul>
+    </div>
+  ))}</div> : null;
+  const Awards=()=> (r.awards&&r.awards.length)? <div className="rs-sec"><Title>Awards & Honors</Title>{r.awards.map((aw,i)=>{
+    const title = typeof aw==='object' ? aw.title : aw;
+    const desc = typeof aw==='object' ? aw.description : null;
+    return <div key={i} className="rs-item" style={{marginBottom:'.5em'}}>
+      <div className="rs-role"><Editable value={title} onChange={v=>edit(n=>{ if(typeof n.awards[i]==='object') n.awards[i].title=v; else n.awards[i]=v; })}/></div>
+      {desc && <span className="rs-pdesc" style={{fontSize:'.88em'}}><Editable multiline value={desc} onChange={v=>edit(n=>{ if(typeof n.awards[i]==='object') n.awards[i].description=v; })}/></span>}
+    </div>;
+  })}</div> : null;
+
+  return (
+    <div className={`rs-page printable ${pageCls}`} style={{ ['--rink']:cfg.accent, fontFamily:cfg.fam }}>
+      <div className={`rs-head ${cfg.head==='serif'?'rs-head-serif':''}`}>
+        <span className="rs-name" style={{fontFamily:cfg.fam}}><Editable value={r.name} placeholder="Your Name" onChange={v=>edit(n=>{n.name=v;})}/></span>
+        <span className="rs-headline"><Editable value={r.headline} placeholder="Professional headline" onChange={v=>edit(n=>{n.headline=v;})}/></span>
+        {cfg.cols!==2 && Contact()}
+        {(cfg.head==='bar'||cfg.head==='mono') && <div className="rs-rule" style={{background:cfg.accent}}/>}
+      </div>
+      {cfg.cols===2 ? (
+        <div className="rs-cols">
+          <div className="rs-side">
+            <div className="rs-sec"><Title>Contact</Title>{Contact()}</div>
+            {(r.skills&&r.skills.length)? <div className="rs-sec"><Title>Skills</Title>{Skills()}</div>:null}
+            {(r.education&&r.education.length)? <div className="rs-sec"><Title>Education</Title>{EduInner()}</div>:null}
+            {(r.certifications&&r.certifications.length)? <div className="rs-sec"><Title>Certifications</Title>{CertsInner()}</div>:null}
+          </div>
+          <div className="rs-mainc">{Summary()}{Experience()}{Projects()}{Volunteer()}{Awards()}</div>
+        </div>
+      ) : (
+        <React.Fragment>
+          {Summary()}{Experience()}{Projects()}
+          {(r.skills&&r.skills.length)? <div className="rs-sec"><Title>Skills</Title>{Skills()}</div>:null}
+          {(r.education&&r.education.length)? <div className="rs-sec"><Title>Education</Title>{EduInner()}</div>:null}
+          {(r.certifications&&r.certifications.length)? <div className="rs-sec"><Title>Certifications</Title>{CertsInner()}</div>:null}
+          {Volunteer()}{Awards()}
+        </React.Fragment>
+      )}
+    </div>
+  );
+}
+
+/* ============================== résumé chat ============================== */
+function localEdit(resume, instr){
+  const s=instr.toLowerCase(); const r=clone(resume);
+  if(/concise|shorten|shorter|tighten|trim|brief/.test(s)){
+    if(r.summary){ const parts=r.summary.split(/(?<=[.!?])\s+/); r.summary=parts.slice(0,2).join(' '); }
+    (r.experience||[]).forEach(e=>{ if(e.bullets) e.bullets=e.bullets.slice(0,3); });
+    return { resume:r, note:'Tightened the summary and trimmed each role to its three strongest bullets.' };
+  }
+  if(/first[\s-]?person|remove i|no i\b|third person/.test(s)){
+    const fix=(t)=>t?t.replace(/\bI\s+/g,'').replace(/\bmy\s+/gi,'').replace(/^\s*([a-z])/,(m,c)=>c.toUpperCase()):t;
+    if(r.summary) r.summary=fix(r.summary);
+    (r.experience||[]).forEach(e=>{ if(e.bullets) e.bullets=e.bullets.map(fix); });
+    return { resume:r, note:'Stripped first-person phrasing throughout.' };
+  }
+  return null;
+}
+function ResumeChat({ resume, target, setResume }){
+  const { setAiOn } = useApp();
+  const [msgs,setMsgs]=useState([{ role:'assistant', text:"I can rewrite your résumé live — ask for anything, like \u201Cemphasize leadership\u201D or \u201Ctighten the summary.\u201D You can also click any text to edit it by hand." }]);
+  const [input,setInput]=useState('');
+  const [busy,setBusy]=useState(false);
+  const scrollRef=useRef(null);
+  useEffect(()=>{ if(scrollRef.current) scrollRef.current.scrollTop=scrollRef.current.scrollHeight; },[msgs,busy]);
+  const quick=['Make the summary more concise','Emphasize leadership & impact','Add more measurable results','Stronger action verbs','Make it more ATS-friendly'];
+  const send=async(text)=>{
+    const t=(text||input).trim(); if(!t||busy) return;
+    setInput(''); setMsgs(m=>[...m,{role:'user',text:t}]); setBusy(true);
+    try{
+      const sys=`You edit a résumé represented as JSON. Apply the user's requested change and return the FULL updated résumé as JSON only (same schema), nothing else. Make only what's asked; keep all other content intact. Never invent facts the user hasn't provided. The target role is "${target.title||'unspecified'}".`;
+      const out=await callAI({ system:sys, user:`Current résumé JSON:\n${JSON.stringify(resume)}\n\nRequested change: ${t}` });
+      const j=parseJSON(out);
+      if(j && j.name){ setResume(j); setMsgs(m=>[...m,{role:'assistant',text:'Done — updated on the left. Want anything else?'}]); setAiOn(true); }
+      else throw new Error('parse');
+    }catch(e){
+      const le=localEdit(resume,t);
+      if(le){ setResume(le.resume); setMsgs(m=>[...m,{role:'assistant',text:le.note+' (quick mode — the AI connection wasn\u2019t reachable.)'}]); }
+      else setMsgs(m=>[...m,{role:'assistant',text:"The live AI editor isn\u2019t reachable right now, but you can edit any text on the résumé directly — just click it. I can still make it more concise or remove first-person offline if you ask."}]);
+      setAiOn(false);
+    }
+    setBusy(false);
+  };
+  return (
+    <div className="chat">
+      <div className="chat-hd"><Icon name="sparkles" size={15} style={{stroke:'var(--accent)'}}/><Eyebrow>Tailor by chat</Eyebrow></div>
+      <div className="chat-scroll" ref={scrollRef}>
+        {msgs.map((m,i)=><div key={i} className={`msg ${m.role==='user'?'msg-user':'msg-assistant'}`}>{m.text}</div>)}
+        {busy && <div className="msg msg-assistant"><Spinner size={13}/> editing…</div>}
+      </div>
+      <div className="quick-actions">{quick.map(q=><button key={q} className="qa" onClick={()=>send(q)} disabled={busy}>{q}</button>)}</div>
+      <div className="chat-input">
+        <input className="field" value={input} onChange={e=>setInput(e.target.value)} placeholder="Ask for an edit…" onKeyDown={e=>{ if(e.key==='Enter') send(); }} disabled={busy}/>
+        <Btn size="sm" onClick={()=>send()} disabled={busy||!input.trim()}><Icon name="send" size={14}/></Btn>
+      </div>
+    </div>
+  );
+}
+
+/* ============================== cover letter ============================== */
+function CoverLetter({ target }){
+  const { profile, entries, notify, setAiOn } = useApp();
+  const [text,setText]=useState('');
+  const [busy,setBusy]=useState(false);
+  const gen=async()=>{
+    setBusy(true);
+    try{
+      const sys=`Write a concise, specific cover letter in 3 short paragraphs for the target role, using only facts from the provided records and profile. Warm and confident, no clichés, no fabrication. Return plain text only, starting with the greeting.`;
+      const u=`Applicant: ${profile.name}, ${profile.headline}\nTarget: ${target.title||'the role'}${target.company?' at '+target.company:''}\nKey/unique requirements: ${target.mandatory||'(none)'}\nRecords:\n${entries.map(e=>`- ${e.title}: ${e.summary}`).join('\n')}`;
+      const out=await callAI({ system:sys, user:u });
+      setText(out.trim()); setAiOn(true); notify('Cover letter drafted');
+    }catch(e){ setText(buildLocalCover(profile,entries,target)); setAiOn(false); notify('Cover letter drafted (quick mode)'); }
+    setBusy(false);
+  };
+  return (
+    <div className="cover-wrap">
+      <div className="paper-tools">
+        <Eyebrow><Icon name="file" size={12}/> Cover letter {target.company?`· ${target.company}`:''}</Eyebrow>
+        <div className="tool-right">
+          <Btn variant="ghost" size="sm" onClick={()=>{ if(navigator.clipboard){navigator.clipboard.writeText(text); notify('Copied');} }} disabled={!text}><Icon name="copy" size={14}/>Copy</Btn>
+          <Btn size="sm" onClick={gen} disabled={busy}>{busy?<Spinner/>:<Icon name="wand" size={14}/>}{text?'Regenerate':'Generate'}</Btn>
+        </div>
+      </div>
+      <div className="cover-paper">
+        {text ? <textarea className="cover-text" value={text} onChange={e=>setText(e.target.value)} /> :
+          <div className="empty"><div className="empty-mark"><Icon name="file" size={18}/></div><p>Generate a tailored letter from your records and the role you set — then edit it freely here.</p></div>}
+      </div>
+    </div>
+  );
+}
+
+/* ============================== résumé studio ============================== */
+function ResumeStudio(){
+  const { profile, entries, resumes, setResumes, notify, setAiOn } = useApp();
+  const [tab,setTab]=useState('setup');
+  const [target,setTarget]=useState({ title:'', company:'', jobText:'', mandatory:'', tone:'Impactful' });
+  const [template,setTemplate]=useState('Modern');
+  const [styleHints,setStyleHints]=useState(null);
+  const [model,setModel]=useState(null);
+  const [resume,setResume]=useState(null);
+  const [busy,setBusy]=useState(false);
+  const fileRef=useRef(null);
+  const setT=(k,v)=>setTarget(p=>({...p,[k]:v}));
+
+  const onFile=(e)=>{ const f=e.target.files&&e.target.files[0]; if(!f) return; const reader=new FileReader(); reader.onload=()=>{ setModel({ b64:String(reader.result).split(',')[1], mime:f.type||'application/octet-stream', name:f.name, kind:(f.type||'').includes('pdf')?'document':'image' }); setTemplate('Imported'); setStyleHints(null); }; reader.readAsDataURL(f); };
+
+  const generate=async()=>{
+    setBusy(true);
+    try{
+      const imported = template==='Imported' && model;
+      const sys=`You are an expert résumé writer and ATS specialist. Produce a comprehensive, detailed résumé as JSON only — no markdown, no commentary. Target length: 3 to 5 full pages of content. Schema: {"name","headline","contact":{"email","phone","location","links":[]},"summary","experience":[{"role","organization","location","start","end","bullets":[]}],"projects":[{"name","description","bullets":[]}],"education":[{"credential","institution","year","details":""}],"certifications":[],"volunteer":[{"role","organization","bullets":[]}],"skills":[],"awards":[{"title","description":""}]}. Rules: Use ONLY facts from the provided profile and records — never invent employers, titles, dates, or numbers. Write 5–8 detailed bullets per role — use natural professional language (present tense for current roles, past tense for past roles). Do NOT force every bullet to start with an action verb; write the way a professional actually describes their work, e.g. "Responsible for managing the team's sprint planning" or "Works closely with designers to ship features on time." Write a 4–6 sentence first-person summary. Include all volunteer work, certifications, and awards. Order experience by relevance to the target; mirror job-description language naturally where truthful. Tone: ${target.tone}.${imported?` A model résumé is attached — mirror its section order, structure and visual feel, and ALSO include a top-level "styleHints":{"accent":"#hex","font":"serif|sans|mono","columns":1|2,"headerStyle":"serif|bar|hair|mono|plain"} describing its look.`:''}`;
+      const u=`PROFILE: ${JSON.stringify(profile)}\n\nTARGET ROLE: ${target.title||'(unspecified)'}${target.company?' at '+target.company:''}\nJOB DESCRIPTION: ${target.jobText||'(none provided)'}\nMUST-HAVE / UNIQUE REQUIREMENTS:\n${target.mandatory||'(none)'}\n\nRECORDS:\n${entries.map(e=>`- [${e.category}] ${e.title}${e.organization?' @ '+e.organization:''} | role: ${e.role||'-'} | skills: ${(e.skills||[]).join(', ')} | impact: ${(e.metrics||[]).join('; ')} | ${e.summary}`).join('\n')}`;
+      const out=await callAI({ system:sys, user:u, attachments: imported?[{kind:model.kind,mime:model.mime,b64:model.b64}]:null });
+      const j=parseJSON(out);
+      if(j && j.name){ if(j.styleHints){ setStyleHints(j.styleHints); setTemplate('Imported'); } setResume(j); setAiOn(true); notify('Résumé generated'); setTab('edit'); }
+      else throw new Error('parse');
+    }catch(e){
+      setResume(buildLocalResume(profile, entries, target)); setAiOn(false); notify('Résumé built (quick mode)'); setTab('edit');
+    }
+    setBusy(false);
+  };
+  const saveVersion=()=>{ if(!resume) return; const v={ id:uid(), name: target.title? `${target.title}${target.company?' · '+target.company:''}` : `${template} résumé`, resume, template, styleHints, target, createdAt:Date.now() }; setResumes(rs=>[v,...rs]); notify('Version saved'); };
+  const loadVersion=(v)=>{ setResume(v.resume); setTemplate(v.template); setStyleHints(v.styleHints); setTarget(v.target); setTab('edit'); };
+  const match=useMemo(()=>resume?computeMatch(resume,`${target.title} ${target.jobText} ${target.mandatory}`):null,[resume,target]);
+
+  return (
+    <div className="page-body studio">
+      <header className="dash-hd">
+        <Eyebrow><Icon name="wand" size={12}/> Résumé Studio</Eyebrow>
+        <h1 className="font-display h-xl">Build it from the record.</h1>
+        <p className="lede">Say what you're applying for. Tally pulls the relevant wins, tailors them, and you fine-tune — by hand or by chat.</p>
+      </header>
+
+      <div className="studio-tabs">
+        {[['setup','Target','target'],['template','Template','layers'],['edit','Edit & tailor','pencil'],['cover','Cover letter','file']].map(([id,label,icon])=>{
+          const locked=(id==='edit'||id==='cover') && !resume;
+          return <button key={id} className={`stab ${tab===id?'stab-on':''} ${locked?'stab-lock':''}`} disabled={locked} onClick={()=>!locked&&setTab(id)}><Icon name={icon} size={14}/>{label}</button>;
+        })}
+      </div>
+
+      {tab==='setup' && (
+        <div className="setup">
+          <section className="card pad">
+            <div className="grid-2">
+              <label className="lbl">Target role / title<input className="field" value={target.title} onChange={e=>setT('title',e.target.value)} placeholder="e.g. Associate Product Manager"/></label>
+              <label className="lbl">Company <span className="dim">(optional)</span><input className="field" value={target.company} onChange={e=>setT('company',e.target.value)} placeholder="e.g. Figma"/></label>
+            </div>
+            <label className="lbl">Paste the job description <span className="dim">— Tally tailors wording & ranks your wins against it</span>
+              <textarea className="field" rows={5} value={target.jobText} onChange={e=>setT('jobText',e.target.value)} placeholder="Paste the posting here…"/></label>
+            <label className="lbl">Must-have or unique requirements <span className="dim">— one per line</span>
+              <textarea className="field" rows={3} value={target.mandatory} onChange={e=>setT('mandatory',e.target.value)} placeholder={"Include a portfolio link\nRequires SQL proficiency\nAvailable to start in June"}/></label>
+            <label className="lbl">Tone</label>
+            <div className="tone-row">{['Impactful','Concise','Professional','Friendly'].map(t=><button key={t} className={`hint ${target.tone===t?'hint-on':''}`} onClick={()=>setT('tone',t)}>{t}</button>)}</div>
+            <div className="setup-foot">
+              <span className="dim sm">{entries.length} records ready · {entries.filter(e=>e.visibility==='public').length} public</span>
+              <Btn onClick={()=>setTab('template')}>Choose a template <Icon name="chevright" size={15}/></Btn>
+            </div>
+          </section>
+          {resumes.length>0 && (
+            <section className="card pad saved-card">
+              <Eyebrow><Icon name="file" size={12}/> Saved versions</Eyebrow>
+              <div className="saved-list">{resumes.map(v=>(
+                <button key={v.id} className="saved-item" onClick={()=>loadVersion(v)}>
+                  <span className="mini-ic cat-Project"><Icon name="file" size={13}/></span>
+                  <span className="saved-name">{v.name}</span><span className="dim mono sm">{v.template}</span><Icon name="chevright" size={15}/>
+                </button>
+              ))}</div>
+            </section>
+          )}
+        </div>
+      )}
+
+      {tab==='template' && (
+        <div>
+          <div className="tpl-gallery">
+            {Object.keys(TEMPLATE_CFG).map(name=>(
+              <button key={name} className={`tpl-card ${template===name?'tpl-on':''}`} onClick={()=>{ setTemplate(name); setStyleHints(null); }}>
+                <div className="tpl-preview"><TemplateThumb name={name} cfg={TEMPLATE_CFG[name]}/></div>
+                <div className="tpl-meta"><span className="tpl-name">{name}</span>{template===name && <Icon name="check" size={16} className="tpl-check"/>}</div>
+                <span className="tpl-blurb">{TEMPLATE_CFG[name].blurb}</span>
+              </button>
+            ))}
+            <button className={`tpl-card ${template==='Imported'?'tpl-on':''}`} onClick={()=>fileRef.current&&fileRef.current.click()}>
+              <div className="tpl-preview tpl-drop"><Icon name="upload" size={22}/>{model?model.name:'Upload a model résumé'}</div>
+              <div className="tpl-meta"><span className="tpl-name">Imported</span>{template==='Imported' && <Icon name="check" size={16} className="tpl-check"/>}</div>
+              <span className="tpl-blurb">{model?'Tally mirrors its layout & style.':'PDF or image — AI matches its look with your data.'}</span>
+            </button>
+            <input ref={fileRef} type="file" accept="image/*,application/pdf" style={{display:'none'}} onChange={onFile}/>
+          </div>
+          <div className="tpl-foot">
+            <div><div className="tpl-foot-label mono">SELECTED</div><div className="tpl-foot-name font-display">{template}{template==='Imported'&&model?` · ${model.name}`:''}</div></div>
+            <Btn onClick={generate} disabled={busy}>{busy?<Spinner/>:<Icon name="sparkles" size={15}/>}{busy?'Generating…':(resume?'Regenerate':'Generate résumé')}</Btn>
+          </div>
+        </div>
+      )}
+
+      {tab==='edit' && resume && (
+        <div className="edit-wrap">
+          <div className="paper-col">
+            <div className="paper-tools">
+              <div className="tool-left">
+                <Eyebrow><Icon name="file" size={12}/> Live résumé</Eyebrow>
+                <select className="field tpl-select" value={template} onChange={e=>{ setTemplate(e.target.value); if(e.target.value!=='Imported') setStyleHints(null); }}>
+                  {Object.keys(TEMPLATE_CFG).map(n=><option key={n} value={n}>{n}</option>)}
+                  {styleHints && <option value="Imported">Imported</option>}
+                </select>
+              </div>
+              <div className="tool-right">
+                <Btn variant="ghost" size="sm" onClick={()=>{ if(navigator.clipboard){navigator.clipboard.writeText(resumeToText(resume)); notify('Copied as text');} }}><Icon name="copy" size={14}/>Copy</Btn>
+                <Btn variant="ghost" size="sm" onClick={()=>downloadResume(resume)}><Icon name="download" size={14}/>Download</Btn>
+                <Btn variant="ghost" size="sm" onClick={()=>window.print()}><Icon name="file" size={14}/>PDF</Btn>
+                <Btn size="sm" onClick={saveVersion}><Icon name="check" size={14}/>Save</Btn>
+              </div>
+            </div>
+            <div className="paper-scroll"><ResumePaper resume={resume} template={template} styleHints={styleHints} onChange={setResume}/></div>
+          </div>
+          <div className="side-col">
+            {match && (
+              <section className="card pad match-card">
+                <Eyebrow><Icon name="target" size={12}/> Job match</Eyebrow>
+                <div className="match-top" style={{marginTop:'.7rem'}}>
+                  <MatchRing pct={match.pct}/>
+                  <p className="match-note">{match.pct>=75?'Strong alignment with the posting.':(match.pct>=50?'Decent match — weave in a few missing terms.':'Add detail or skills to lift this.')}</p>
+                </div>
+                {match.missing.length>0 && <div className="missing"><span className="missing-l mono">MISSING KEYWORDS</span><div className="chip-row" style={{marginTop:0}}>{match.missing.map(m=><span key={m} className="chip-mini chip-warn">{m}</span>)}</div></div>}
+              </section>
+            )}
+            <section className="card pad"><ResumeChat resume={resume} target={target} setResume={setResume}/></section>
+          </div>
+        </div>
+      )}
+
+      {tab==='cover' && resume && <CoverLetter target={target} />}
+    </div>
+  );
+}
+
+/* ============================== shell ============================== */
+const TallyMark = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M5 5v14M9.5 5v14M14 5v14M18.5 5v14M3.5 16.5 20 9"/></svg>;
+const NAV = [['home','Home','home'],['journal','Journal','book'],['profile','Profile','user'],['community','Community','users'],['resume','Résumé Studio','file']];
+
+function Sidebar(){
+  const { view, setView, aiOn, setQuickLog, setSettingsOpen } = useApp();
+  return (
+    <aside className="sidebar">
+      <div className="brand"><span className="brand-mark"><TallyMark/></span><span className="brand-name">Tally</span></div>
+      <nav className="nav">{NAV.map(([id,label,icon])=>(
+        <button key={id} className={`nav-item ${view===id?'on':''}`} onClick={()=>setView(id)}><Icon name={icon} size={18}/>{label}</button>
+      ))}</nav>
+      <div className="side-bottom">
+        <Btn onClick={()=>setQuickLog(true)}><Icon name="plus" size={15}/>Log a win</Btn>
+        {aiOn!==null && <span className={`ai-pill ${aiOn?'ai-on':'ai-off'}`}><span className="dotled"/>{aiOn?'AI connected':'Quick mode'}</span>}
+        <button className="side-sub-btn" onClick={()=>setSettingsOpen(true)}><Icon name="settings" size={15}/>Settings & data</button>
+        <button className="side-sub-btn" onClick={()=>window._sb.auth.signOut()}><Icon name="lock" size={15}/>Sign out</button>
+      </div>
+    </aside>
+  );
+}
+function MobileTop(){
+  const { setQuickLog, setSettingsOpen } = useApp();
+  return (
+    <div className="mtop">
+      <div className="brand"><span className="brand-mark"><TallyMark/></span><span className="brand-name">Tally</span></div>
+      <div style={{display:'flex',gap:'.4rem',alignItems:'center'}}>
+        <Btn size="sm" onClick={()=>setQuickLog(true)}><Icon name="plus" size={14}/>Log</Btn>
+        <button className="ic-btn" onClick={()=>setSettingsOpen(true)}><Icon name="settings" size={19}/></button>
+      </div>
+    </div>
+  );
+}
+function BottomNav(){
+  const { view, setView } = useApp();
+  const items=[['home','Home','home'],['journal','Journal','book'],['resume','Résumé','file'],['profile','Profile','user'],['community','People','users']];
+  return <nav className="bottomnav">{items.map(([id,label,icon])=>(
+    <button key={id} className={`bn-item ${view===id?'on':''}`} onClick={()=>setView(id)}><Icon name={icon} size={21}/>{label}</button>
+  ))}</nav>;
+}
+function QuickLogModal({ onClose }){
+  const { logEntry, notify } = useApp();
+  const [d,setD]=useState(''); const [hint,setHint]=useState('Auto'); const [busy,setBusy]=useState(false);
+  const submit=async()=>{ if(!d.trim()||busy) return; setBusy(true); await logEntry(d,hint); setBusy(false); notify('Logged to your record'); onClose(); };
+  return (
+    <Modal open onClose={onClose} wide>
+      <Eyebrow><Icon name="pencil" size={12}/> Quick log</Eyebrow>
+      <h2 className="font-display modal-h">Capture a win.</h2>
+      <textarea className="field" rows={4} autoFocus value={d} onChange={e=>setD(e.target.value)} placeholder={'"Closed my first enterprise deal — $40k ARR."'} onKeyDown={e=>{ if((e.metaKey||e.ctrlKey)&&e.key==='Enter') submit(); }}/>
+      <div className="hint-row" style={{marginTop:'.7rem'}}>{['Auto',...CATEGORIES].slice(0,6).map(c=><button key={c} className={`hint ${hint===c?'hint-on':''}`} onClick={()=>setHint(c)}>{c}</button>)}</div>
+      <div className="modal-foot"><Btn variant="ghost" onClick={onClose}>Cancel</Btn><Btn onClick={submit} disabled={!d.trim()||busy}>{busy?<Spinner/>:<Icon name="sparkles" size={15}/>}{busy?'Filing…':'Log it'}</Btn></div>
+    </Modal>
+  );
+}
+function Toggle({ checked, onChange }){
+  return (
+    <label className="toggle">
+      <input type="checkbox" checked={!!checked} onChange={e=>onChange(e.target.checked)}/>
+      <span className="toggle-track"/>
+    </label>
+  );
+}
+
+function SettingsModal({ onClose }){
+  const { profile, setProfile, entries, setEntries, setResumes, setCommunity, settings, setSettings, notify } = useApp();
+  const [armed,setArmed]=useState(false);
+  const set=(k,v)=>setSettings(s=>({...s,[k]:v}));
+
+  const exportData = () => {
+    const payload = { profile, entries, settings, exportedAt: new Date().toISOString() };
+    const blob = new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href=url; a.download='tally-export.json';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1500);
+    notify('Data exported as JSON');
+  };
+
+  const clearAll = () => {
+    if(!armed){ setArmed(true); return; }
+    setProfile({name:'',headline:'',location:'',email:'',phone:'',linkedin:'',summary:'',avatar:'\u00b7',accountType:''});
+    setEntries([]); setResumes([]);
+    setCommunity({likes:[],comments:{},posts:[],connections:[]});
+    notify('All data deleted'); onClose();
+  };
+
+  const changePassword = async () => {
+    try{
+      const {data:{user}} = await window._sb.auth.getUser();
+      if(user?.email){ await window._sb.auth.resetPasswordForEmail(user.email); notify('Reset link sent to '+user.email); }
+    }catch(e){ notify('Could not send reset email'); }
+  };
+
+  return (
+    <Modal open onClose={onClose} wide>
+      <Eyebrow><Icon name="settings" size={12}/> Settings</Eyebrow>
+      <h2 className="font-display modal-h" style={{marginBottom:'1.2rem'}}>Settings & preferences</h2>
+
+      <div className="settings-section">
+        <span className="settings-section-label">Appearance</span>
+        <div className="setting-row">
+          <div><div className="setting-label">Dark mode</div><div className="setting-desc">Switch to a dark colour scheme</div></div>
+          <Toggle checked={settings.darkMode} onChange={v=>set('darkMode',v)}/>
+        </div>
+        <div className="setting-row">
+          <div><div className="setting-label">Compact view</div><div className="setting-desc">Reduce spacing in the journal for a denser layout</div></div>
+          <Toggle checked={settings.compactView} onChange={v=>set('compactView',v)}/>
+        </div>
+      </div>
+
+      <div className="settings-section">
+        <span className="settings-section-label">Privacy & posting</span>
+        <div className="setting-row">
+          <div><div className="setting-label">Auto-post logs publicly</div><div className="setting-desc">New journal entries are automatically shared to your community feed</div></div>
+          <Toggle checked={settings.autoPostPublic} onChange={v=>set('autoPostPublic',v)}/>
+        </div>
+        <div className="setting-row">
+          <div><div className="setting-label">Default entry visibility</div><div className="setting-desc">Starting visibility when you log a new entry</div></div>
+          <select className="field" style={{width:'auto',padding:'.32rem .65rem',fontSize:'.82rem'}} value={settings.defaultVisibility||'private'} onChange={e=>set('defaultVisibility',e.target.value)}>
+            <option value="private">Private</option>
+            <option value="public">Public</option>
+          </select>
+        </div>
+        <div className="setting-row">
+          <div><div className="setting-label">Show profile in community</div><div className="setting-desc">Your name appears in the community directory</div></div>
+          <Toggle checked={settings.publicProfile} onChange={v=>set('publicProfile',v)}/>
+        </div>
+      </div>
+
+      <div className="settings-section">
+        <span className="settings-section-label">AI preferences</span>
+        <div className="setting-row">
+          <div><div className="setting-label">Default résumé tone</div><div className="setting-desc">Applied automatically when generating new résumés</div></div>
+          <select className="field" style={{width:'auto',padding:'.32rem .65rem',fontSize:'.82rem'}} value={settings.aiTone||'Professional'} onChange={e=>set('aiTone',e.target.value)}>
+            {['Professional','Impactful','Concise','Friendly'].map(t=><option key={t}>{t}</option>)}
+          </select>
+        </div>
+      </div>
+
+      <div className="settings-section">
+        <span className="settings-section-label">Account</span>
+        <div className="setting-row">
+          <div><div className="setting-label">Export my data</div><div className="setting-desc">Download your profile and all entries as a JSON file</div></div>
+          <Btn variant="ghost" size="sm" onClick={exportData}><Icon name="download" size={14}/>Export</Btn>
+        </div>
+        <div className="setting-row">
+          <div><div className="setting-label">Change password</div><div className="setting-desc">Sends a reset link to your account email</div></div>
+          <Btn variant="ghost" size="sm" onClick={changePassword}><Icon name="lock" size={14}/>Send link</Btn>
+        </div>
+        <div className="setting-row">
+          <div><div className="setting-label" style={{color:'#b91c1c'}}>Delete all data</div><div className="setting-desc">Permanently removes your profile, entries, and résumés</div></div>
+          <Btn size="sm" onClick={clearAll} style={{background:armed?'#b91c1c':'transparent',borderColor:armed?'#b91c1c':'#fecaca',color:armed?'#fff':'#b91c1c',boxShadow:'none'}}>
+            <Icon name="trash" size={14}/>{armed?'Confirm — cannot undo':'Delete data'}
+          </Btn>
+        </div>
+      </div>
+
+      <p className="dim sm-note" style={{borderTop:'1px solid var(--line-2)',paddingTop:'.8rem',marginTop:'.2rem'}}>Tally · your career, on the record.</p>
+    </Modal>
+  );
+}
+
+/* ============================== auth ============================== */
+function AuthScreen(){
+  const [mode,setMode] = useState('login');
+  const [email,setEmail] = useState('');
+  const [password,setPassword] = useState('');
+  const [busy,setBusy] = useState(false);
+  const [error,setError] = useState('');
+  const [success,setSuccess] = useState('');
+
+  const submit = async (ev) => {
+    ev.preventDefault();
+    setBusy(true); setError(''); setSuccess('');
+    try{
+      if(mode==='login'){
+        const {error:e} = await window._sb.auth.signInWithPassword({email,password});
+        if(e) throw e;
+      } else {
+        const {error:e} = await window._sb.auth.signUp({email,password});
+        if(e) throw e;
+        setSuccess('Check your email for a confirmation link to activate your account.');
+      }
+    }catch(e){ setError(e.message||'Something went wrong'); }
+    finally{ setBusy(false); }
+  };
+
+  return (
+    <div className="auth-page">
+      <div className="auth-card card">
+        <div className="auth-brand">
+          <span className="brand-mark"><TallyMark/></span>
+          <span className="brand-name">Tally</span>
+        </div>
+        <h2 className="auth-h">{mode==='login'?'Sign in to your account':'Create your account'}</h2>
+        <form onSubmit={submit}>
+          <label className="lbl">Email
+            <input className="field" type="email" autoComplete="email" required value={email} onChange={e=>setEmail(e.target.value)} placeholder="you@example.com"/>
+          </label>
+          <label className="lbl" style={{marginTop:'.7rem'}}>Password
+            <input className="field" type="password" autoComplete={mode==='login'?'current-password':'new-password'} required value={password} onChange={e=>setPassword(e.target.value)} placeholder={mode==='login'?'Your password':'At least 6 characters'} minLength={6}/>
+          </label>
+          {error && <p className="auth-error">{error}</p>}
+          {success && <p className="auth-success">{success}</p>}
+          <Btn style={{width:'100%',marginTop:'1.1rem',justifyContent:'center'}} disabled={busy}>
+            {busy?<Spinner/>:(mode==='login'?<Icon name="lock" size={15}/>:<Icon name="plus" size={15}/>)}
+            {busy?'Please wait…':(mode==='login'?'Sign in':'Create account')}
+          </Btn>
+        </form>
+        <p className="auth-switch">
+          {mode==='login'?'No account yet?':'Already have an account?'}
+          <button className="link-btn" style={{marginLeft:'.4rem'}} onClick={()=>{setMode(mode==='login'?'signup':'login');setError('');setSuccess('');}}>
+            {mode==='login'?'Sign up free':'Sign in'}
+          </button>
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function Root(){
+  const [session,setSession] = useState(undefined);
+  useEffect(()=>{
+    window._sb.auth.getSession().then(({data:{session}})=>setSession(session));
+    const {data:{subscription}} = window._sb.auth.onAuthStateChange((_,s)=>setSession(s));
+    return ()=>subscription.unsubscribe();
+  },[]);
+  if(session===undefined) return <div className="boot"><Spinner size={26}/><div>Loading…</div></div>;
+  if(!session) return <AuthScreen/>;
+  return <App session={session}/>;
+}
+
+/* ============================== app ============================== */
+function App({ session }){
+  const [profile,setProfile]=useState(SEED.profile);
+  const [entries,setEntries]=useState([]);
+  const [resumes,setResumes]=useState([]);
+  const [community,setCommunity]=useState(SEED.community);
+  const [settings,setSettings]=useState(SEED.settings);
+  const [view,setView]=useState('home');
+  const [toasts,setToasts]=useState([]);
+  const [aiOn,setAiOn]=useState(null);
+  const [hydrated,setHydrated]=useState(false);
+  const [quickLog,setQuickLog]=useState(false);
+  const [settingsOpen,setSettingsOpen]=useState(false);
+
+  useEffect(()=>{ (async()=>{
+    const p=await store.get(K.profile,null);
+    if(p){
+      setProfile(p);
+      setEntries(await store.get(K.entries,[]));
+      setResumes(await store.get(K.resumes,[]));
+      const rawC = await store.get(K.community,SEED.community);
+      // migrate: strip old hardcoded peers array
+      setCommunity({likes:[],comments:{},posts:[],connections:[],...rawC, peers:undefined});
+      setSettings(await store.get(K.settings,SEED.settings));
+    } else {
+      setProfile(SEED.profile); setEntries(SEED.entries); setCommunity(SEED.community); setSettings(SEED.settings);
+      await store.set(K.profile,SEED.profile); await store.set(K.entries,SEED.entries);
+      await store.set(K.community,SEED.community); await store.set(K.settings,SEED.settings);
+    }
+    setHydrated(true);
+  })(); },[]);
+
+  useEffect(()=>{ if(hydrated) store.set(K.profile,profile); },[profile,hydrated]);
+  useEffect(()=>{ if(hydrated) store.set(K.entries,entries); },[entries,hydrated]);
+  useEffect(()=>{ if(hydrated) store.set(K.resumes,resumes); },[resumes,hydrated]);
+  useEffect(()=>{ if(hydrated) store.set(K.community,community); },[community,hydrated]);
+  useEffect(()=>{ if(hydrated) store.set(K.settings,settings); },[settings,hydrated]);
+  useEffect(()=>{ document.body.classList.toggle('dark', !!settings.darkMode); },[settings.darkMode]);
+
+  const notify=(msg)=>{ const id=uid(); setToasts(t=>[...t,{id,msg}]); setTimeout(()=>setToasts(t=>t.filter(x=>x.id!==id)),2600); };
+  const logEntry=async(raw,hint)=>{
+    const s=await structureEntry(raw,hint,setAiOn);
+    const vis=settings.defaultVisibility||'private';
+    const entry={ id:uid(), createdAt:Date.now(), visibility:vis, ...s };
+    setEntries(e=>[entry,...e]);
+    if(settings.autoPostPublic){
+      const post={ id:uid(), name:profile.name||'You', headline:profile.headline||'', avatar:profile.avatar||'·', accountType:profile.accountType||'', content:`${entry.title}\n${entry.summary}`, visibility:'public', category:entry.category, media:null, likes:[], createdAt:Date.now(), mine:true };
+      setCommunity(c=>({...c, posts:[post,...(c.posts||[])]}));
+    }
+    return entry;
+  };
+  const addEntries=(arr)=>setEntries(e=>[...arr,...e]);
+  const updateEntry=(id,patch)=>setEntries(e=>e.map(x=>x.id===id?{...x,...patch}:x));
+  const deleteEntry=(id)=>setEntries(e=>e.filter(x=>x.id!==id));
+
+  const ctx={ profile,setProfile, entries,setEntries, addEntries, logEntry, updateEntry, deleteEntry, resumes,setResumes, community,setCommunity, settings,setSettings, view,setView, notify, aiOn,setAiOn, quickLog,setQuickLog, settingsOpen,setSettingsOpen };
+
+  if(!hydrated) return <div className="boot"><Spinner size={26}/><div>Opening your record…</div></div>;
+
+  return (
+    <Ctx.Provider value={ctx}>
+      <div className="app-shell">
+        <Sidebar/>
+        <main className="main">
+          <MobileTop/>
+          {view==='home' && <Dashboard/>}
+          {view==='journal' && <JournalView/>}
+          {view==='profile' && <ProfileView/>}
+          {view==='community' && <CommunityView/>}
+          {view==='resume' && <ResumeStudio/>}
+        </main>
+        <BottomNav/>
+      </div>
+      {quickLog && <QuickLogModal onClose={()=>setQuickLog(false)} />}
+      {settingsOpen && <SettingsModal onClose={()=>setSettingsOpen(false)} />}
+      <div className="toasts">{toasts.map(t=><div key={t.id} className="toast"><Icon name="check" size={15}/>{t.msg}</div>)}</div>
+    </Ctx.Provider>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<Root/>);
+</script>
+</body>
+</html>
